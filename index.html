@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="POP — persuit of precision. Virtual Physics SLA Assignment measurement laboratory with zero-error corrections for Vernier Caliper, Screw Gauge, and Spherometer." />
+  <title>POP — persuit of precision</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+    <header class="navbar">
+    <div class="nav-container">
+      <a href="#home" class="nav-logo">
+        <img src="LOGOPOP.png" alt="POP Logo" class="brand-logo-img" />
+        <span class="brand-name-text">POP</span>
+        <span class="brand-motto-tag">persuit of precision</span>
+      </a>
+      <nav>
+        <ul class="nav-links">
+          <li><a href="#home">Home</a></li>
+          <li><a href="#vernier">Vernier Caliper</a></li>
+          <li><a href="#screw-gauge">Screw Gauge</a></li>
+          <li><a href="#spherometer">Spherometer</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main class="main-content">
+        <section id="home" class="hero-section">
+            <div class="hero-logo-wrapper">
+        <img src="LOGOPOP.png" alt="POP - persuit of precision" class="hero-brand-logo" />
+      </div>
+
+            <div class="warp-text-container" id="warp-text-box" title="Move your cursor to warp the text!">
+        <canvas id="warp-canvas" class="warp-text-canvas"></canvas>
+      </div>
+      <p class="hero-subtitle">persuit of precision — Measurement Using Vernier Caliper, Screw Gauge & Spherometer</p>
+      <p class="hero-desc">
+        Welcome to the POP precision measurement laboratory. This interactive platform calculates experimental readings for precision physics instruments while automatically handling both positive and negative zero-error corrections.
+      </p>
+
+            <div class="quick-jump-grid">
+        <a href="#vernier" class="jump-card">
+          <h3>1. Vernier Caliper</h3>
+          <p>Measure internal/external diameters and depths with Least Count precision.</p>
+        </a>
+        <a href="#screw-gauge" class="jump-card">
+          <h3>2. Screw Gauge</h3>
+          <p>Determine wire diameter and sheet thickness with micrometric accuracy.</p>
+        </a>
+        <a href="#spherometer" class="jump-card">
+          <h3>3. Spherometer</h3>
+          <p>Calculate small thicknesses and the radius of curvature (R) of spherical surfaces.</p>
+        </a>
+      </div>
+    </section>
+
+        <section class="zero-error-guide">
+      <h3>Understanding Instrument Zero Error</h3>
+      <p>
+        Zero error occurs when the zero mark of the secondary scale does not coincide with the zero mark of the main scale when measuring jaws/studs are closed together.
+      </p>
+      <div class="ze-example-grid">
+        <div class="ze-card positive">
+          <h4>Positive Zero Error (+ZE)</h4>
+          <p>Secondary scale zero lies ahead of or beyond the main scale zero. The instrument over-reads. <strong>Correction: Subtracted</strong>.</p>
+        </div>
+        <div class="ze-card negative">
+          <h4>Negative Zero Error (−ZE)</h4>
+          <p>Secondary scale zero lies behind the main scale zero. The instrument under-reads. <strong>Correction: Added (Observed − (−ZE))</strong>.</p>
+        </div>
+      </div>
+    </section>
+
+        <section id="vernier" class="calculator-section">
+      <div class="card">
+        <div class="section-header">
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
+            <div>
+              <h2 class="section-title">Vernier Caliper</h2>
+              <span class="section-tag">Linear Precision</span>
+            </div>
+            <button type="button" class="btn btn-primary sim-toggle-btn" id="toggle-vernier-sim-btn">
+              <span id="sim-btn-icon">🔬</span> <span id="sim-btn-text">Open Interactive Virtual Caliper</span>
+            </button>
+          </div>
+        </div>
+
+                <div id="vernier-sim-wrapper" class="vernier-sim-wrapper" style="display: none;">
+          <div class="sim-panel">
+            <div class="sim-toolbar">
+              <div class="sim-tools-left">
+                <span class="sim-badge">Interactive Physics Instrument</span>
+                <span class="sim-instructions">Drag movable jaw or thumb slider to measure</span>
+              </div>
+              <div class="sim-controls-group">
+                                <div class="sim-btn-pair">
+                  <button type="button" class="sim-tool-btn" id="vsim-zoom-in" title="Zoom In (Inspect scale coincidence)">
+                    🔍+ Zoom In
+                  </button>
+                  <button type="button" class="sim-tool-btn" id="vsim-zoom-out" title="Zoom Out">
+                    🔍− Zoom Out
+                  </button>
+                  <button type="button" class="sim-tool-btn" id="vsim-zoom-reset" title="Reset Zoom">
+                    Reset Zoom
+                  </button>
+                </div>
+                                <button type="button" class="sim-tool-btn highlight" id="vsim-flip-btn" title="Flip between Horizontal & Vertical measurement modes">
+                  🔄 Flip to Vertical (Depth Mode)
+                </button>
+              </div>
+            </div>
+
+                        <div class="sim-objects-bar">
+              <span class="sim-objects-title">Select Test Object:</span>
+              <div class="object-buttons" id="sim-object-buttons">
+                <button type="button" class="obj-btn active" data-obj="none">None (Free Move)</button>
+                <button type="button" class="obj-btn" data-obj="marble" data-size="16.4" data-type="outer">
+                  🔵 Glass Marble (Ø 16.4 mm)
+                </button>
+                <button type="button" class="obj-btn" data-obj="cylinder" data-size="28.7" data-type="outer">
+                  🔩 Brass Cylinder (Ø 28.7 mm)
+                </button>
+                <button type="button" class="obj-btn" data-obj="beaker" data-size="34.2" data-type="inner">
+                  🧪 Test Tube Inner (Ø 34.2 mm)
+                </button>
+                <button type="button" class="obj-btn" data-obj="depth" data-size="42.5" data-type="depth">
+                  📏 Calorimeter Well (Depth 42.5 mm)
+                </button>
+              </div>
+            </div>
+
+                        <div class="sim-canvas-container" id="vsim-canvas-container">
+              <div class="canvas-zoom-wrapper" id="vsim-zoom-wrapper">
+                <canvas id="vernier-canvas" width="1250" height="360" class="vernier-canvas"></canvas>
+              </div>
+            </div>
+
+                        <div class="sim-slider-row">
+              <label for="vsim-slider">Fine Slide Position (0 to 120 mm):</label>
+              <input type="range" id="vsim-slider" min="0" max="120" step="0.1" value="0" class="sim-slider" />
+              <span id="vsim-slider-val" class="sim-slider-disp">0.0 mm</span>
+            </div>
+
+                        <div class="sim-anatomy-guide">
+              <span class="anatomy-pill">① Fixed & Movable External Jaws (Outer Dia)</span>
+              <span class="anatomy-pill">② Internal Jaws (Bore / Inner Dia)</span>
+              <span class="anatomy-pill">③ Main Scale (Graduated in mm / cm)</span>
+              <span class="anatomy-pill">④ Vernier Scale (0.1 mm precision)</span>
+              <span class="anatomy-pill">⑤ Depth Bar (Tail Depth Measure)</span>
+              <span class="anatomy-pill">⑥ Thumb Grip & Fine Adjustment</span>
+            </div>
+          </div>
+        </div>
+
+                <div class="formula-box">
+          <h4>Governing Formulas</h4>
+          <div class="formula-list">
+            <div>• <span class="formula-highlight">Observed Reading</span> = Main Scale Reading (MSR) + (Vernier Scale Reading × Least Count)</div>
+            <div>• <span class="formula-highlight">Corrected Reading</span> = Observed Reading − Zero Error</div>
+          </div>
+        </div>
+
+                <form id="vernier-form">
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="vernier-unit">Measurement Unit</label>
+              <select id="vernier-unit" class="form-control">
+                <option value="cm" selected>Centimeters (cm)</option>
+                <option value="mm">Millimeters (mm)</option>
+              </select>
+              <span class="input-helper">Selected unit applies to all values</span>
+            </div>
+
+            <div class="form-group">
+              <label for="vernier-msr">Main Scale Reading (MSR)</label>
+              <input type="number" step="any" id="vernier-msr" class="form-control" placeholder="e.g. 2.30" required />
+              <span class="input-helper">Reading on the stationary main bar</span>
+            </div>
+
+            <div class="form-group">
+              <label for="vernier-vsr">Vernier Coincidence / VSR</label>
+              <input type="number" step="any" min="0" id="vernier-vsr" class="form-control" placeholder="e.g. 6" required />
+              <span class="input-helper">Coinciding vernier scale division number</span>
+            </div>
+
+            <div class="form-group">
+              <label for="vernier-lc">Least Count (LC)</label>
+              <input type="number" step="any" id="vernier-lc" class="form-control" placeholder="e.g. 0.01" value="0.01" required />
+              <span class="input-helper">Typically 0.01 cm (or 0.1 mm)</span>
+            </div>
+
+            <div class="form-group">
+              <label for="vernier-ze">Zero Error (with sign)</label>
+              <input type="number" step="any" id="vernier-ze" class="form-control" placeholder="e.g. +0.02 or -0.01" value="0" required />
+              <span class="input-helper">Enter 0 if nil, positive (+) or negative (−)</span>
+            </div>
+          </div>
+
+          <div class="button-group">
+            <button type="submit" class="btn btn-primary" id="vernier-calc-btn">Calculate Reading</button>
+            <button type="button" class="btn btn-secondary" id="vernier-reset-btn">Reset</button>
+          </div>
+        </form>
+
+                <div id="vernier-error-box" class="error-message"></div>
+
+                <div id="vernier-result-box" class="result-box">
+          <h4 style="margin-bottom: 0.75rem; color: var(--text-main);">Step-by-Step Calculation:</h4>
+          <div id="vernier-steps" class="calculation-steps"></div>
+          <div class="final-result-badge">
+            <span>Corrected Reading:</span>
+            <span id="vernier-final-value">--</span>
+          </div>
+        </div>
+
+                <div class="edu-info">
+          <h4>What is a Vernier Caliper?</h4>
+          <p>
+            A <strong>Vernier Caliper</strong> is an instrument used to measure internal dimensions, external dimensions, and depths of objects with high accuracy (typically down to 0.01 cm or 0.1 mm).
+          </p>
+          <p>
+            <strong>Basic Principle:</strong> It uses the difference between one main scale division (MSD) and one vernier scale division (VSD). By aligning scale graduations, small fractional divisions that cannot be read by an ordinary ruler can be measured directly without guessing.
+          </p>
+          <div class="edu-tips">
+            <strong>Common Applications:</strong> Measuring cylinder outer/inner diameters, spherical bob dimensions, and calorimeter depths.
+          </div>
+        </div>
+      </div>
+    </section>
+
+        <section id="screw-gauge" class="calculator-section">
+      <div class="card">
+        <div class="section-header">
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
+            <div>
+              <h2 class="section-title">Screw Gauge</h2>
+              <span class="section-tag">Micrometric Precision</span>
+            </div>
+            <button type="button" class="btn btn-primary sim-toggle-btn" id="toggle-screw-sim-btn">
+              <span>🔩</span> <span id="screw-sim-btn-text">Open Interactive Virtual Screw Gauge</span>
+            </button>
+          </div>
+        </div>
+
+                <div id="screw-sim-wrapper" class="vernier-sim-wrapper" style="display: none;">
+          <div class="sim-panel">
+            <div class="sim-toolbar">
+              <div class="sim-tools-left">
+                <span class="sim-badge">Micrometer Lab Simulator</span>
+                <span class="sim-instructions">Drag the circular thimble/ratchet or use the slider below to measure</span>
+              </div>
+              <div class="sim-controls-group">
+                                <div class="sim-btn-pair">
+                  <button type="button" class="sim-tool-btn" id="ssim-zoom-in" title="Zoom In on Pitch & Circular Scale">
+                    🔍+ Zoom In
+                  </button>
+                  <button type="button" class="sim-tool-btn" id="ssim-zoom-out" title="Zoom Out">
+                    🔍− Zoom Out
+                  </button>
+                  <button type="button" class="sim-tool-btn" id="ssim-zoom-reset" title="Reset Zoom">
+                    Reset Zoom
+                  </button>
+                </div>
+              </div>
+            </div>
+
+                        <div class="sim-objects-bar">
+              <span class="sim-objects-title">Select Specimen:</span>
+              <div class="object-buttons" id="screw-object-buttons">
+                <button type="button" class="obj-btn active" data-obj="none">None (Free Spin)</button>
+                <button type="button" class="obj-btn" data-obj="wire" data-size="1.42">
+                  🧶 Copper Wire (Ø 1.42 mm)
+                </button>
+                <button type="button" class="obj-btn" data-obj="lead" data-size="4.85">
+                  🔴 Lead Shot (Ø 4.85 mm)
+                </button>
+                <button type="button" class="obj-btn" data-obj="sheet" data-size="0.68">
+                  📄 Glass Plate (0.68 mm)
+                </button>
+                <button type="button" class="obj-btn" data-obj="ball" data-size="9.35">
+                  ⚙️ Steel Ball Bearing (Ø 9.35 mm)
+                </button>
+              </div>
+            </div>
+
+                        <div class="sim-canvas-container" id="ssim-canvas-container">
+              <div class="canvas-zoom-wrapper" id="ssim-zoom-wrapper">
+                <canvas id="screw-canvas" width="1250" height="380" class="vernier-canvas"></canvas>
+              </div>
+            </div>
+
+                        <div class="sim-slider-row">
+              <label for="ssim-slider">Precision Thimble Position (0 to 25 mm):</label>
+              <input type="range" id="ssim-slider" min="0" max="25" step="0.01" value="0" class="sim-slider" />
+              <span id="ssim-slider-val" class="sim-slider-disp">0.00 mm</span>
+            </div>
+
+                        <div class="sim-anatomy-guide">
+              <span class="anatomy-pill">① Fixed Anvil & U-Frame</span>
+              <span class="anatomy-pill">② Movable Spindle (Linear Motion)</span>
+              <span class="anatomy-pill">③ Main / Pitch Scale with Datum Line</span>
+              <span class="anatomy-pill">④ Circular Thimble Scale (100 Divisions, LC = 0.01 mm)</span>
+              <span class="anatomy-pill">⑤ Ratchet Mechanism (Prevents overtightening)</span>
+            </div>
+          </div>
+        </div>
+
+                <div class="formula-box">
+          <h4>Governing Formulas</h4>
+          <div class="formula-list">
+            <div>• <span class="formula-highlight">Least Count (LC)</span> = Pitch / Number of Circular Scale Divisions</div>
+            <div>• <span class="formula-highlight">Observed Reading</span> = Main Scale Reading (MSR) + (Circular Scale Reading × Least Count)</div>
+            <div>• <span class="formula-highlight">Corrected Reading</span> = Observed Reading − Zero Error</div>
+          </div>
+        </div>
+
+                <form id="screw-form">
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="screw-unit">Measurement Unit</label>
+              <select id="screw-unit" class="form-control">
+                <option value="mm" selected>Millimeters (mm)</option>
+                <option value="cm">Centimeters (cm)</option>
+              </select>
+              <span class="input-helper">Typically measured in mm</span>
+            </div>
+
+            <div class="form-group">
+              <label for="screw-pitch">Pitch of the Screw</label>
+              <input type="number" step="any" id="screw-pitch" class="form-control" placeholder="e.g. 1" value="1" required />
+              <span class="input-helper">Linear advance per 1 full rotation (e.g. 1 mm)</span>
+            </div>
+
+            <div class="form-group">
+              <label for="screw-csd">Circular Scale Divisions (CSD)</label>
+              <input type="number" step="any" min="1" id="screw-csd" class="form-control" placeholder="e.g. 100" value="100" required />
+              <span class="input-helper">Total divisions on circular thimble (50 or 100)</span>
+            </div>
+
+            <div class="form-group">
+              <label for="screw-msr">Main Scale Reading (PSR / MSR)</label>
+              <input type="number" step="any" id="screw-msr" class="form-control" placeholder="e.g. 5" required />
+              <span class="input-helper">Visible mark on the linear pitch scale</span>
+            </div>
+
+            <div class="form-group">
+              <label for="screw-csr">Circular Scale Reading (CSR)</label>
+              <input type="number" step="any" min="0" id="screw-csr" class="form-control" placeholder="e.g. 25" required />
+              <span class="input-helper">Division coinciding with reference line</span>
+            </div>
+
+            <div class="form-group">
+              <label for="screw-ze">Zero Error (with sign)</label>
+              <input type="number" step="any" id="screw-ze" class="form-control" placeholder="e.g. +0.02 or -0.02" value="0" required />
+              <span class="input-helper">Enter 0 if nil, positive (+) or negative (−)</span>
+            </div>
+          </div>
+
+          <div class="button-group">
+            <button type="submit" class="btn btn-primary" id="screw-calc-btn">Calculate Reading</button>
+            <button type="button" class="btn btn-secondary" id="screw-reset-btn">Reset</button>
+          </div>
+        </form>
+
+                <div id="screw-error-box" class="error-message"></div>
+
+                <div id="screw-result-box" class="result-box">
+          <h4 style="margin-bottom: 0.75rem; color: var(--text-main);">Step-by-Step Calculation:</h4>
+          <div id="screw-steps" class="calculation-steps"></div>
+          <div class="final-result-badge">
+            <span>Corrected Reading:</span>
+            <span id="screw-final-value">--</span>
+          </div>
+        </div>
+
+                <div class="edu-info">
+          <h4>What is a Screw Gauge (Micrometer)?</h4>
+          <p>
+            A <strong>Screw Gauge</strong> is a precision instrument designed for measuring tiny dimensions such as the thickness of thin glass sheets, paper, or the diameter of thin wires with an accuracy reaching up to 0.01 mm or 0.001 cm.
+          </p>
+          <p>
+            <strong>Basic Principle:</strong> It operates on the principle of a screw and nut mechanism: rotational motion of the screw is translated into uniform linear movement along the axis of rotation. The ratchet mechanism prevents excessive pressure on delicate specimens.
+          </p>
+          <div class="edu-tips">
+            <strong>Common Applications:</strong> Finding gauge numbers of copper wires, thickness of microscope coverslips, and uniform spherical pellets.
+          </div>
+        </div>
+      </div>
+    </section>
+
+        <section id="spherometer" class="calculator-section">
+      <div class="card">
+        <div class="section-header">
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
+            <div>
+              <h2 class="section-title">Spherometer</h2>
+              <span class="section-tag">Surface Curvature & Thickness</span>
+            </div>
+            <button type="button" class="btn btn-primary sim-toggle-btn" id="toggle-sphero-sim-btn">
+              <span>🔭</span> <span id="sphero-sim-btn-text">Open Interactive Virtual Spherometer</span>
+            </button>
+          </div>
+        </div>
+
+                <div id="sphero-sim-wrapper" class="vernier-sim-wrapper" style="display: none;">
+          <div class="sim-panel">
+            <div class="sim-toolbar">
+              <div class="sim-tools-left">
+                <span class="sim-badge">Spherometer Lab Simulator</span>
+                <span class="sim-instructions">Rotate brass circular disc / screw or use the slider below to measure sagitta (h) and curvature</span>
+              </div>
+              <div class="sim-controls-group">
+                                <div class="sim-btn-pair">
+                  <button type="button" class="sim-tool-btn" id="spherom-zoom-in" title="Zoom In on Pitch Scale & Circular Head">
+                    🔍+ Zoom In
+                  </button>
+                  <button type="button" class="sim-tool-btn" id="spherom-zoom-out" title="Zoom Out">
+                    🔍− Zoom Out
+                  </button>
+                  <button type="button" class="sim-tool-btn" id="spherom-zoom-reset" title="Reset Zoom">
+                    Reset Zoom
+                  </button>
+                </div>
+              </div>
+            </div>
+
+                        <div class="sim-objects-bar">
+              <span class="sim-objects-title">Select Test Surface:</span>
+              <div class="object-buttons" id="sphero-surface-buttons">
+                <button type="button" class="obj-btn active" data-surf="flat" data-h="0.00">
+                  🪞 Plane Glass Plate (h = 0.00 mm)
+                </button>
+                <button type="button" class="obj-btn" data-surf="convex1" data-h="2.25">
+                  🔍 Convex Watch Glass (h = 2.25 mm)
+                </button>
+                <button type="button" class="obj-btn" data-surf="convex2" data-h="3.60">
+                  🔬 Convex Lens (h = 3.60 mm)
+                </button>
+                <button type="button" class="obj-btn" data-surf="concave" data-h="-1.85">
+                  🥣 Concave Mirror (h = -1.85 mm)
+                </button>
+              </div>
+            </div>
+
+                        <div class="sim-canvas-container" id="spherom-canvas-container">
+              <div class="canvas-zoom-wrapper" id="spherom-zoom-wrapper">
+                <canvas id="spherometer-canvas" width="1250" height="420" class="vernier-canvas"></canvas>
+              </div>
+            </div>
+
+                        <div class="sim-slider-row">
+              <label for="spherom-slider">Screw Elevation / Sagitta (h: -5.00 to +10.00 mm):</label>
+              <input type="range" id="spherom-slider" min="-5" max="10" step="0.01" value="0" class="sim-slider" />
+              <span id="spherom-slider-val" class="sim-slider-disp">0.00 mm</span>
+            </div>
+
+                        <div class="sim-anatomy-guide">
+              <span class="anatomy-pill">① Heavy Circular Cast Base with 3 Fixed Outer Legs</span>
+              <span class="anatomy-pill">② Central Screwed Leg with Pointed Tip</span>
+              <span class="anatomy-pill">③ Vertical Linear Pitch Scale (Pitch = 1 mm, -10 to +10 mm)</span>
+              <span class="anatomy-pill">④ Circular Brass Disc Head (100 Divisions, LC = 0.01 mm)</span>
+              <span class="anatomy-pill">⑤ Knurled Brass Milling Head for Smooth Rotation</span>
+            </div>
+          </div>
+        </div>
+
+                <div class="formula-box">
+          <h4>Governing Formulas</h4>
+          <div class="formula-list">
+            <div>• <span class="formula-highlight">Least Count (LC)</span> = Pitch / Number of Circular Scale Divisions</div>
+            <div>• <span class="formula-highlight">Observed Reading (h<sub>obs</sub>)</span> = Main Scale Reading + (Circular Scale Reading × Least Count)</div>
+            <div>• <span class="formula-highlight">Corrected Reading (h)</span> = Observed Reading − Zero Error</div>
+            <div>• <span class="formula-highlight">Radius of Curvature (R)</span> = (l² / 6h) + (h / 2) &nbsp;&nbsp;<em style="font-size: 0.8rem; color: #475569;">[l = mean distance between legs]</em></div>
+          </div>
+        </div>
+
+                <form id="spherometer-form">
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="sphero-unit">Measurement Unit</label>
+              <select id="sphero-unit" class="form-control">
+                <option value="mm" selected>Millimeters (mm)</option>
+                <option value="cm">Centimeters (cm)</option>
+              </select>
+              <span class="input-helper">Keep units identical across all fields</span>
+            </div>
+
+            <div class="form-group">
+              <label for="sphero-pitch">Pitch of the Screw</label>
+              <input type="number" step="any" id="sphero-pitch" class="form-control" placeholder="e.g. 1" value="1" required />
+              <span class="input-helper">Linear distance advanced in 1 full turn</span>
+            </div>
+
+            <div class="form-group">
+              <label for="sphero-csd">Circular Scale Divisions</label>
+              <input type="number" step="any" min="1" id="sphero-csd" class="form-control" placeholder="e.g. 100" value="100" required />
+              <span class="input-helper">Total divisions on circular disc (usually 100)</span>
+            </div>
+
+            <div class="form-group">
+              <label for="sphero-msr">Main Scale Reading (Vertical Scale)</label>
+              <input type="number" step="any" id="sphero-msr" class="form-control" placeholder="e.g. 2" required />
+              <span class="input-helper">Reading on fixed vertical millimeter pitch scale</span>
+            </div>
+
+            <div class="form-group">
+              <label for="sphero-csr">Circular Scale Reading (CSR)</label>
+              <input type="number" step="any" min="0" id="sphero-csr" class="form-control" placeholder="e.g. 30" required />
+              <span class="input-helper">Division on rotating circular head</span>
+            </div>
+
+            <div class="form-group">
+              <label for="sphero-ze">Zero Error (with sign)</label>
+              <input type="number" step="any" id="sphero-ze" class="form-control" placeholder="e.g. +0.05 or -0.05" value="0" required />
+              <span class="input-helper">Error when placed on flat glass plane</span>
+            </div>
+
+            <div class="form-group">
+              <label for="sphero-legs">Distance between legs (l) <span class="unit-badge">(Optional for R)</span></label>
+              <input type="number" step="any" id="sphero-legs" class="form-control" placeholder="e.g. 30" />
+              <span class="input-helper">Mean distance between equilateral triangle legs</span>
+            </div>
+          </div>
+
+          <div class="button-group">
+            <button type="submit" class="btn btn-primary" id="sphero-calc-btn">Calculate Reading & Radius</button>
+            <button type="button" class="btn btn-secondary" id="sphero-reset-btn">Reset</button>
+          </div>
+        </form>
+
+                <div id="spherometer-error-box" class="error-message"></div>
+
+                <div id="spherometer-result-box" class="result-box">
+          <h4 style="margin-bottom: 0.75rem; color: var(--text-main);">Step-by-Step Calculation:</h4>
+          <div id="spherometer-steps" class="calculation-steps"></div>
+          <div class="final-result-badge">
+            <span>Result:</span>
+            <span id="spherometer-final-value">--</span>
+          </div>
+        </div>
+
+                <div class="edu-info">
+          <h4>What is a Spherometer?</h4>
+          <p>
+            A <strong>Spherometer</strong> is a measuring device with three supporting outer legs in an equilateral triangle and a central screw leg used to measure tiny vertical heights (sagitta <em>h</em>) and determine the radius of curvature <em>(R)</em> of spherical surfaces like convex lenses, concave mirrors, or thin watch glasses.
+          </p>
+          <p>
+            <strong>Basic Principle:</strong> Based on the micrometric screw principle combined with 3-point planar geometry. When placed on a sphere, the central screw advances or recedes by sagitta distance <em>h</em>, which geometrically links to radius <em>R</em> through Pythagoras' theorem: <code>R = (l² / 6h) + (h / 2)</code>.
+          </p>
+          <div class="edu-tips">
+            <strong>Common Applications:</strong> Finding the focal length of optical lenses by measuring surface curvature and determining thickness of small plates.
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+    <footer class="footer">
+    <p><strong>POP | persuit of precision</strong></p>
+    <p class="footer-subtitle">Physics Measurement Lab • Vernier Caliper • Screw Gauge • Spherometer</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
