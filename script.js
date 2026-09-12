@@ -29,6 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initVernier();
   initScrew();
   initSpherometer();
+  initBeamsBackground();
 });
 function initVernier() {
   const mainTicksContainer = document.getElementById('main-ticks');
@@ -542,4 +543,128 @@ function initSpherometer() {
   hInput.addEventListener('input', update);
   errorInput.addEventListener('input', update);
   update();
+}
+
+function initBeamsBackground() {
+  const canvas = document.getElementById('beams-canvas');
+  if (!canvas) return;
+
+  const gl = canvas.getContext('webgl', { alpha: true, antialias: true }) || canvas.getContext('experimental-webgl');
+  if (!gl) return;
+
+  const vsSource = `
+    attribute vec2 position;
+    varying vec2 vUv;
+    void main() {
+      vUv = position * 0.5 + 0.5;
+      gl_Position = vec4(position, 0.0, 1.0);
+    }
+  `;
+
+  const fsSource = `
+    precision mediump float;
+    varying vec2 vUv;
+    uniform float uTime;
+    uniform vec2 uResolution;
+
+    float hash(vec2 p) {
+      return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453123);
+    }
+
+    float noise(vec2 p) {
+      vec2 i = floor(p);
+      vec2 f = fract(p);
+      vec2 u = f * f * (3.0 - 2.0 * f);
+      return mix(mix(hash(i + vec2(0.0, 0.0)), hash(i + vec2(1.0, 0.0)), u.x),
+                 mix(hash(i + vec2(0.0, 1.0)), hash(i + vec2(1.0, 1.0)), u.x), u.y);
+    }
+
+    void main() {
+      vec2 uv = (gl_FragCoord.xy - 0.5 * uResolution.xy) / uResolution.y;
+      
+      float t = uTime * 0.35;
+      float beamField = 0.0;
+      
+      vec3 beamColor1 = vec3(0.54, 0.10, 0.47);
+      vec3 beamColor2 = vec3(0.86, 0.64, 0.20);
+      
+      for (float i = 0.0; i < 12.0; i += 1.0) {
+        float xOffset = (i - 5.5) * 0.28;
+        float n = noise(vec2(i * 1.5 + t * 0.4, uv.y * 1.8 - t * 0.8));
+        float beamX = xOffset + (n - 0.5) * 0.35;
+        float dist = abs(uv.x - beamX);
+        float width = 0.02 + 0.015 * sin(i * 1.7 + t);
+        float beam = smoothstep(width + 0.12, width, dist);
+        
+        float lengthFade = smoothstep(1.2, -0.2, uv.y) * smoothstep(-1.2, 0.2, uv.y);
+        beamField += beam * lengthFade * (0.6 + 0.4 * sin(i * 2.3 + t * 1.2));
+      }
+
+      float grain = (hash(gl_FragCoord.xy + fract(uTime)) - 0.5) * 0.04;
+      vec3 finalColor = mix(beamColor1, beamColor2, vUv.y * 0.7 + 0.3 * sin(uTime * 0.5)) * beamField * 0.55;
+      finalColor += grain;
+      
+      float alpha = clamp(beamField * 0.6, 0.0, 0.85);
+      gl_FragColor = vec4(finalColor, alpha);
+    }
+  `;
+
+  function createShader(type, src) {
+    const s = gl.createShader(type);
+    gl.shaderSource(s, src);
+    gl.compileShader(s);
+    return s;
+  }
+
+  const program = gl.createProgram();
+  const vs = createShader(gl.VERTEX_SHADER, vsSource);
+  const fs = createShader(gl.FRAGMENT_SHADER, fsSource);
+  gl.attachShader(program, vs);
+  gl.attachShader(program, fs);
+  gl.linkProgram(program);
+  gl.useProgram(program);
+
+  const posBuffer = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, posBuffer);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+    -1, -1,
+     1, -1,
+    -1,  1,
+    -1,  1,
+     1, -1,
+     1,  1
+  ]), gl.STATIC_DRAW);
+
+  const posLoc = gl.getAttribLocation(program, 'position');
+  gl.enableVertexAttribArray(posLoc);
+  gl.vertexAttribPointer(posLoc, 2, gl.FLOAT, false, 0, 0);
+
+  const timeLoc = gl.getUniformLocation(program, 'uTime');
+  const resLoc = gl.getUniformLocation(program, 'uResolution');
+
+  function resize() {
+    const width = canvas.parentElement ? canvas.parentElement.clientWidth : window.innerWidth;
+    const height = canvas.parentElement ? canvas.parentElement.clientHeight : window.innerHeight;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width = width * dpr;
+    canvas.height = height * dpr;
+    gl.viewport(0, 0, canvas.width, canvas.height);
+  }
+
+  window.addEventListener('resize', resize);
+  resize();
+
+  let startTime = performance.now();
+  function render() {
+    const section = document.getElementById('home');
+    if (section && section.classList.contains('active')) {
+      const now = performance.now();
+      const elapsed = (now - startTime) / 1000;
+      gl.uniform1f(timeLoc, elapsed);
+      gl.uniform2f(resLoc, canvas.width, canvas.height);
+      gl.drawArrays(gl.TRIANGLES, 0, 6);
+    }
+    requestAnimationFrame(render);
+  }
+  requestAnimationFrame(render);
 }
