@@ -144,9 +144,6 @@ function initWarpText() {
     float g = base.g;
     float b = sampleText(displaced - split).b;
     float a = max(max(sampleText(displaced + split).a, base.a), sampleText(displaced - split).a);
-
-    // Color palette adherence: White base text (#ffffff) with Orchid Mist (#C47AC0 = 0.768, 0.478, 0.753)
-    // and Powder Petal (#F2DFD7 = 0.949, 0.875, 0.843) refraction glow around the warp lens
     vec3 baseWhite = vec3(1.0, 1.0, 1.0);
     vec3 orchidMist = vec3(0.768, 0.478, 0.753);
     vec3 powderPetal = vec3(0.949, 0.875, 0.843);

@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="POP — persuit of precision. Virtual Physics SLA Assignment measurement laboratory with zero-error corrections for Vernier Caliper, Screw Gauge, and Spherometer." />
   <title>POP — persuit of precision</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -22,6 +23,8 @@
           <li><a href="#vernier">Vernier Caliper</a></li>
           <li><a href="#screw-gauge">Screw Gauge</a></li>
           <li><a href="#spherometer">Spherometer</a></li>
+          <li><a href="#about">About Us</a></li>
+          <li><a href="#iks" class="iks-nav-link">IKS Metrology</a></li>
         </ul>
       </nav>
     </div>
@@ -36,12 +39,23 @@
             <div class="warp-text-container" id="warp-text-box" title="Move your cursor to warp the text!">
         <canvas id="warp-canvas" class="warp-text-canvas"></canvas>
       </div>
+      <div class="kinetic-graphic">
+        <svg viewBox="0 0 400 150" class="kinetic-svg">
+          <g class="cog-group">
+            <circle cx="200" cy="75" r="50" fill="none" stroke="rgba(196, 122, 192, 0.25)" stroke-width="4" stroke-dasharray="10, 5" />
+            <circle cx="200" cy="75" r="30" fill="none" stroke="rgba(196, 122, 192, 0.45)" stroke-width="2" stroke-dasharray="6, 3" />
+          </g>
+          <line x1="50" y1="75" x2="350" y2="75" stroke="var(--accent-orchid)" stroke-width="2" opacity="0.6" />
+          <circle cx="200" cy="75" r="6" fill="var(--accent-powder)" />
+          <circle cx="200" cy="75" r="15" fill="none" stroke="var(--accent-orchid)" stroke-width="1.5" class="pulse-circle" />
+        </svg>
+      </div>
       <p class="hero-subtitle">persuit of precision — Measurement Using Vernier Caliper, Screw Gauge & Spherometer</p>
       <p class="hero-desc">
-        Welcome to the POP precision measurement laboratory. This interactive platform calculates experimental readings for precision physics instruments while automatically handling both positive and negative zero-error corrections.
+        Welcome to the POP precision measurement laboratory. This interactive platform calculates experimental readings for precision physics instruments while automatically handling both positive and negative zero-error corrections, unified with classical and Indian metrological traditions.
       </p>
 
-            <div class="quick-jump-grid">
+      <div class="quick-jump-grid">
         <a href="#vernier" class="jump-card">
           <h3>1. Vernier Caliper</h3>
           <p>Measure internal/external diameters and depths with Least Count precision.</p>
@@ -53,6 +67,14 @@
         <a href="#spherometer" class="jump-card">
           <h3>3. Spherometer</h3>
           <p>Calculate small thicknesses and the radius of curvature (R) of spherical surfaces.</p>
+        </a>
+        <a href="#iks" class="jump-card">
+          <h3>4. IKS Metrology</h3>
+          <p>Explore Vedic measurement units and ancient Indian linear standards.</p>
+        </a>
+        <a href="#about" class="jump-card">
+          <h3>5. About Us</h3>
+          <p>Meet the SLA Physics Sem-1 project contributors & roles.</p>
         </a>
       </div>
     </section>
@@ -552,6 +574,138 @@
           </p>
           <div class="edu-tips">
             <strong>Common Applications:</strong> Finding the focal length of optical lenses by measuring surface curvature and determining thickness of small plates.
+          </div>
+        </div>
+      </div>
+    <section id="iks" class="calculator-section">
+      <div class="card iks-card">
+        <div class="section-header">
+          <div>
+            <h2 class="section-title">Indian Knowledge System (IKS) on Metrology</h2>
+            <span class="section-tag">Ancient Precision & Vedic Standards</span>
+          </div>
+        </div>
+        <p class="iks-intro-text">
+          Measurement (<em>Māna</em>) has been fundamental to Indian civilization since the Vedic period. The <strong>Sulba Sutras</strong> (c. 800–500 BCE) detail precise geometric measurements for constructing fire altars with mathematical rigor. Kautilya's <strong>Arthashastra</strong> (c. 4th Century BCE) contains dedicated chapters on weights, measures, and standards of length, establishing standard units from the subatomic scale up to geographic distances.
+        </p>
+        
+        <div class="iks-grid">
+          <div class="iks-item">
+            <h3 class="iks-item-title">Standard Linear Units (Arthashastra)</h3>
+            <div class="table-responsive">
+              <table class="iks-table">
+                <thead>
+                  <tr>
+                    <th>Unit</th>
+                    <th>Definition / Equivalence</th>
+                    <th>Approx. Metric Value</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>Paramanu</strong></td>
+                    <td>Indivisible particle of matter</td>
+                    <td>Sub-micron scale</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Liksha</strong></td>
+                    <td>8 Paramanus</td>
+                    <td>~ 0.25 mm</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Yuka</strong></td>
+                    <td>8 Likshas</td>
+                    <td>~ 2 mm</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Angula</strong></td>
+                    <td>8 Yukas (Finger width)</td>
+                    <td>~ 1.9 cm</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Hasta</strong></td>
+                    <td>24 Angulas (Cubit)</td>
+                    <td>~ 45.7 cm</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Dhanus</strong></td>
+                    <td>4 Hastas (Fathom / Bow)</td>
+                    <td>~ 1.83 m</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="iks-item">
+            <h3 class="iks-item-title">Ancient Measurement Instruments</h3>
+            <div class="iks-instrument-block">
+              <h4>Sutra (Measuring Cord)</h4>
+              <p>Used in Vedic times for high-precision geometry, temple layouts, and altar planning. It served as a flexible linear standard for creating proportional spatial layouts.</p>
+            </div>
+            <div class="iks-instrument-block">
+              <h4>Shanku (Gnomon)</h4>
+              <p>A vertical rod used to find cardinal directions, local solar time, and geographical coordinates. Its shadow length functioned as a celestial analog calculator.</p>
+            </div>
+            <div class="iks-instrument-block">
+              <h4>Yasti Yantra (Measuring Staff)</h4>
+              <p>Described by Lalla and Bhaskara II, it was a calibrated staff used to determine elevations, heights, and angular distances of astronomical bodies.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="about" class="calculator-section">
+      <div class="card about-card">
+        <div class="section-header" style="text-align: center; justify-content: center;">
+          <div>
+            <h2 class="section-title">About the Project & Team</h2>
+            <span class="section-tag">GROUP ^ 6 • Physics SLA Sem-1</span>
+          </div>
+        </div>
+        <p class="about-desc">
+          This Metrology Simulator & Indian Knowledge System suite was developed as a Physics SLA Project for Sem-1.
+          It combines high-precision mechanical instrument simulations with ancient Indian metrological history, providing an intuitive, interactive environment for precision laboratory measurement.
+        </p>
+        
+        <div class="iks-item" style="max-width: 850px; margin: 0 auto;">
+          <h3 class="iks-item-title">Project Contributions</h3>
+          <div class="table-responsive">
+            <table class="iks-table team-table">
+              <thead>
+                <tr>
+                  <th>Team Member</th>
+                  <th>Role / Contribution</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Avani Shastri</strong> (MIT)</td>
+                  <td>Website Design & Whole Site Architecture</td>
+                </tr>
+                <tr>
+                  <td><strong>Siya Kale</strong> (MIT)</td>
+                  <td>UI/UX Design (Interactive elements, Calibration sliders, Caliper styling)</td>
+                </tr>
+                <tr>
+                  <td><strong>Taal Patil</strong> (MIT)</td>
+                  <td>Project Report for Experiment 1 & 2 (Vernier Caliper & Screw Gauge)</td>
+                </tr>
+                <tr>
+                  <td><strong>Mrunmayee Kulkarni</strong> (MIT)</td>
+                  <td>Project Report for Experiment 3 (Spherometer & Indian Knowledge System)</td>
+                </tr>
+                <tr>
+                  <td><strong>Kashish</strong> (MIT)</td>
+                  <td>Simulation Calculations, Metrology Formulations, & Flowcharts</td>
+                </tr>
+                <tr>
+                  <td><strong>Kshiteej Mali</strong></td>
+                  <td>Website Backend Simulation Handling & Math Logic Scripting</td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
