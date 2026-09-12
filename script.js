@@ -204,20 +204,84 @@ function initVernier() {
     currentPanY = 0;
     svg.style.cursor = 'grab';
   }
-  svg.addEventListener('mousedown', (e) => startPan(e.clientX, e.clientY));
-  window.addEventListener('mousemove', (e) => movePan(e.clientX, e.clientY));
-  window.addEventListener('mouseup', endPan);
+  let isDraggingSlider = false;
+  let dragStartSvgX = 0;
+  let dragStartVal = 0;
+  function getSvgPoint(clientX, clientY) {
+    const pt = svg.createSVGPoint();
+    pt.x = clientX;
+    pt.y = clientY;
+    return pt.matrixTransform(caliperAssembly.getScreenCTM().inverse());
+  }
+  function startDragSlider(clientX, clientY) {
+    isDraggingSlider = true;
+    activeTrigger = 'slider';
+    const svgPt = getSvgPoint(clientX, clientY);
+    dragStartSvgX = svgPt.x;
+    dragStartVal = parseFloat(valInput.value) || 0;
+    slider.style.transition = 'none';
+    slider.style.cursor = 'grabbing';
+    document.body.style.userSelect = 'none';
+  }
+  function moveDragSlider(clientX, clientY) {
+    if (!isDraggingSlider) return;
+    const svgPt = getSvgPoint(clientX, clientY);
+    const deltaSvgX = svgPt.x - dragStartSvgX;
+    const deltaMm = deltaSvgX / 10;
+    let newVal = Math.max(0, Math.min(60, dragStartVal + deltaMm));
+    newVal = Math.round(newVal * 10) / 10;
+    valInput.value = newVal;
+    update();
+  }
+  function endDragSlider() {
+    if (!isDraggingSlider) return;
+    isDraggingSlider = false;
+    slider.style.cursor = 'grab';
+    document.body.style.userSelect = '';
+  }
+  slider.style.cursor = 'grab';
+  slider.addEventListener('mousedown', (e) => {
+    e.stopPropagation();
+    startDragSlider(e.clientX, e.clientY);
+  });
+  slider.addEventListener('touchstart', (e) => {
+    if (e.touches.length === 1) {
+      e.stopPropagation();
+      startDragSlider(e.touches[0].clientX, e.touches[0].clientY);
+    }
+  }, { passive: false });
+  svg.addEventListener('mousedown', (e) => {
+    if (e.target.closest('#vernier-slider')) return;
+    startPan(e.clientX, e.clientY);
+  });
+  window.addEventListener('mousemove', (e) => {
+    if (isDraggingSlider) {
+      moveDragSlider(e.clientX, e.clientY);
+    } else if (isPanning) {
+      movePan(e.clientX, e.clientY);
+    }
+  });
+  window.addEventListener('mouseup', () => {
+    endDragSlider();
+    endPan();
+  });
   svg.addEventListener('touchstart', (e) => {
+    if (e.target.closest('#vernier-slider')) return;
     if (e.touches.length === 1) startPan(e.touches[0].clientX, e.touches[0].clientY);
   });
   window.addEventListener('touchmove', (e) => {
-    if (isPanning && e.touches.length === 1) {
+    if (isDraggingSlider && e.touches.length === 1) {
+      e.preventDefault();
+      moveDragSlider(e.touches[0].clientX, e.touches[0].clientY);
+    } else if (isPanning && e.touches.length === 1) {
       e.preventDefault();
       movePan(e.touches[0].clientX, e.touches[0].clientY);
     }
   }, { passive: false });
-  window.addEventListener('touchend', endPan);
-  svg.style.cursor = 'grab';
+  window.addEventListener('touchend', () => {
+    endDragSlider();
+    endPan();
+  });
   modeBtn.addEventListener('click', () => {
     const graphicBox = document.querySelector('.sim-graphic');
     if (mode === 'jaw') {
@@ -404,20 +468,82 @@ function initScrew() {
     currentPanY = 0;
     svg.style.cursor = 'grab';
   }
-  svg.addEventListener('mousedown', (e) => startPan(e.clientX, e.clientY));
-  window.addEventListener('mousemove', (e) => movePan(e.clientX, e.clientY));
-  window.addEventListener('mouseup', endPan);
+  let isDraggingThimble = false;
+  let dragStartSvgX = 0;
+  let dragStartVal = 0;
+  function getSvgPoint(clientX, clientY) {
+    const pt = svg.createSVGPoint();
+    pt.x = clientX;
+    pt.y = clientY;
+    return pt.matrixTransform(svg.getScreenCTM().inverse());
+  }
+  function startDragThimble(clientX, clientY) {
+    isDraggingThimble = true;
+    const svgPt = getSvgPoint(clientX, clientY);
+    dragStartSvgX = svgPt.x;
+    dragStartVal = parseFloat(valInput.value) || 0;
+    thimble.style.cursor = 'grabbing';
+    document.body.style.userSelect = 'none';
+  }
+  function moveDragThimble(clientX, clientY) {
+    if (!isDraggingThimble) return;
+    const svgPt = getSvgPoint(clientX, clientY);
+    const deltaSvgX = svgPt.x - dragStartSvgX;
+    const deltaMm = deltaSvgX / 12;
+    let newVal = Math.max(0, Math.min(25, dragStartVal + deltaMm));
+    newVal = Math.round(newVal * 100) / 100;
+    valInput.value = newVal;
+    update();
+  }
+  function endDragThimble() {
+    if (!isDraggingThimble) return;
+    isDraggingThimble = false;
+    thimble.style.cursor = 'grab';
+    document.body.style.userSelect = '';
+  }
+  thimble.style.cursor = 'grab';
+  thimble.addEventListener('mousedown', (e) => {
+    e.stopPropagation();
+    startDragThimble(e.clientX, e.clientY);
+  });
+  thimble.addEventListener('touchstart', (e) => {
+    if (e.touches.length === 1) {
+      e.stopPropagation();
+      startDragThimble(e.touches[0].clientX, e.touches[0].clientY);
+    }
+  }, { passive: false });
+  svg.addEventListener('mousedown', (e) => {
+    if (e.target.closest('#thimble')) return;
+    startPan(e.clientX, e.clientY);
+  });
+  window.addEventListener('mousemove', (e) => {
+    if (isDraggingThimble) {
+      moveDragThimble(e.clientX, e.clientY);
+    } else if (isPanning) {
+      movePan(e.clientX, e.clientY);
+    }
+  });
+  window.addEventListener('mouseup', () => {
+    endDragThimble();
+    endPan();
+  });
   svg.addEventListener('touchstart', (e) => {
+    if (e.target.closest('#thimble')) return;
     if (e.touches.length === 1) startPan(e.touches[0].clientX, e.touches[0].clientY);
   });
   window.addEventListener('touchmove', (e) => {
-    if (isPanning && e.touches.length === 1) {
+    if (isDraggingThimble && e.touches.length === 1) {
+      e.preventDefault();
+      moveDragThimble(e.touches[0].clientX, e.touches[0].clientY);
+    } else if (isPanning && e.touches.length === 1) {
       e.preventDefault();
       movePan(e.touches[0].clientX, e.touches[0].clientY);
     }
   }, { passive: false });
-  window.addEventListener('touchend', endPan);
-  svg.style.cursor = 'grab';
+  window.addEventListener('touchend', () => {
+    endDragThimble();
+    endPan();
+  });
   valInput.addEventListener('input', update);
   errorInput.addEventListener('input', update);
   update();
@@ -524,20 +650,82 @@ function initSpherometer() {
     currentPanY = 0;
     svg.style.cursor = 'grab';
   }
-  svg.addEventListener('mousedown', (e) => startPan(e.clientX, e.clientY));
-  window.addEventListener('mousemove', (e) => movePan(e.clientX, e.clientY));
-  window.addEventListener('mouseup', endPan);
+  let isDraggingScrew = false;
+  let dragStartSvgY = 0;
+  let dragStartVal = 0;
+  function getSvgPoint(clientX, clientY) {
+    const pt = svg.createSVGPoint();
+    pt.x = clientX;
+    pt.y = clientY;
+    return pt.matrixTransform(svg.getScreenCTM().inverse());
+  }
+  function startDragScrew(clientX, clientY) {
+    isDraggingScrew = true;
+    const svgPt = getSvgPoint(clientX, clientY);
+    dragStartSvgY = svgPt.y;
+    dragStartVal = parseFloat(hInput.value) || 0;
+    screw.style.cursor = 'grabbing';
+    document.body.style.userSelect = 'none';
+  }
+  function moveDragScrew(clientX, clientY) {
+    if (!isDraggingScrew) return;
+    const svgPt = getSvgPoint(clientX, clientY);
+    const deltaSvgY = svgPt.y - dragStartSvgY;
+    const deltaMm = deltaSvgY / 10;
+    let newVal = Math.max(0, Math.min(10, dragStartVal + deltaMm));
+    newVal = Math.round(newVal * 100) / 100;
+    hInput.value = newVal;
+    update();
+  }
+  function endDragScrew() {
+    if (!isDraggingScrew) return;
+    isDraggingScrew = false;
+    screw.style.cursor = 'grab';
+    document.body.style.userSelect = '';
+  }
+  screw.style.cursor = 'grab';
+  screw.addEventListener('mousedown', (e) => {
+    e.stopPropagation();
+    startDragScrew(e.clientX, e.clientY);
+  });
+  screw.addEventListener('touchstart', (e) => {
+    if (e.touches.length === 1) {
+      e.stopPropagation();
+      startDragScrew(e.touches[0].clientX, e.touches[0].clientY);
+    }
+  }, { passive: false });
+  svg.addEventListener('mousedown', (e) => {
+    if (e.target.closest('#spherometer-screw')) return;
+    startPan(e.clientX, e.clientY);
+  });
+  window.addEventListener('mousemove', (e) => {
+    if (isDraggingScrew) {
+      moveDragScrew(e.clientX, e.clientY);
+    } else if (isPanning) {
+      movePan(e.clientX, e.clientY);
+    }
+  });
+  window.addEventListener('mouseup', () => {
+    endDragScrew();
+    endPan();
+  });
   svg.addEventListener('touchstart', (e) => {
+    if (e.target.closest('#spherometer-screw')) return;
     if (e.touches.length === 1) startPan(e.touches[0].clientX, e.touches[0].clientY);
   });
   window.addEventListener('touchmove', (e) => {
-    if (isPanning && e.touches.length === 1) {
+    if (isDraggingScrew && e.touches.length === 1) {
+      e.preventDefault();
+      moveDragScrew(e.touches[0].clientX, e.touches[0].clientY);
+    } else if (isPanning && e.touches.length === 1) {
       e.preventDefault();
       movePan(e.touches[0].clientX, e.touches[0].clientY);
     }
   }, { passive: false });
-  window.addEventListener('touchend', endPan);
-  svg.style.cursor = 'grab';
+  window.addEventListener('touchend', () => {
+    endDragScrew();
+    endPan();
+  });
   surfaceSelect.addEventListener('change', update);
   aInput.addEventListener('input', update);
   hInput.addEventListener('input', update);
