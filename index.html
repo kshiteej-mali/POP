@@ -9,9 +9,16 @@
     href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Outfit:wght@300;400;500;700&display=swap"
     rel="stylesheet">
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
 </head>
 
 <body>
+  <!-- Full Bleed Ambient Beams Canvas -->
+  <div class="beams-canvas-container">
+    <canvas id="beams-canvas"></canvas>
+  </div>
   <header>
     <div class="logo" style="font-family: 'Cinzel', serif;">GROUP <span class="caret">^</span>6</div>
     <div class="header-nav-container">
@@ -30,9 +37,6 @@
 
   <main>
     <section id="home" class="section active">
-      <div class="beams-canvas-container">
-        <canvas id="beams-canvas"></canvas>
-      </div>
       <div class="home-hero">
         <h1 class="hero-title">GROUP <span class="hero-caret">^</span> 6</h1>
         <p class="hero-subtitle">Physics SLA Sem-1 Metrology Suite</p>
@@ -187,7 +191,7 @@
               <button class="zoom-btn" id="vernier-zoom-out">-</button>
             </div>
             <button id="vernier-mode-btn" class="action-btn"
-              style="position: absolute; top: 15px; right: 15px; z-index: 10; background: var(--accent); color: #0b020c; border-color: var(--accent);">Flip
+              style="position: absolute; top: 15px; right: 15px; z-index: 10; background: var(--accent); color: #07131e; border-color: var(--accent);">Flip
               to Depth Mode</button>
             <svg id="vernier-svg" viewBox="-50 -100 900 450">
               <defs>
@@ -204,41 +208,44 @@
               </defs>
               <g id="vernier-viewport">
 
+                <!-- Depth Beaker: Aligned directly under the vertical depth probe in Depth Mode -->
                 <g id="depth-beaker" style="display: none; opacity: 0;">
-
-                  <rect x="722" y="140" width="56" height="138" fill="#1b4d75" fill-opacity="0.6" />
-
-                  <path d="M 720 80 L 720 280 L 780 280 L 780 80" fill="none" stroke="#e5b842" stroke-width="3"
-                    stroke-linecap="round" />
-
-                  <line x1="720" y1="130" x2="735" y2="130" stroke="#e5b842" stroke-width="1.5" />
-                  <line x1="720" y1="180" x2="735" y2="180" stroke="#e5b842" stroke-width="1.5" />
-                  <line x1="720" y1="230" x2="735" y2="230" stroke="#e5b842" stroke-width="1.5" />
-                </g>
-
-
-                <g id="svg-test-objects">
-
-                  <rect id="svg-obj-cyl-out" x="100" y="100" width="240" height="120" fill="url(#metal-grad)"
-                    stroke="#585966" stroke-width="1.5" rx="8" style="display: none;" />
-
-                  <g id="svg-obj-cyl-in" style="display: none;">
-                    <rect x="90" y="15" width="10" height="45" fill="url(#metal-grad)" stroke="#585966"
-                      stroke-width="1" />
-                    <rect x="250" y="15" width="10" height="45" fill="url(#metal-grad)" stroke="#585966"
-                      stroke-width="1" />
-                    <rect x="90" y="15" width="170" height="6" fill="url(#metal-grad)" opacity="0.8" />
-                    <rect x="90" y="54" width="170" height="6" fill="url(#metal-grad)" opacity="0.8" />
-                  </g>
-
-                  <rect id="svg-obj-rect" x="100" y="100" width="425" height="120" fill="url(#wood-grad)"
-                    stroke="#5c3f2b" stroke-width="1.5" rx="4" style="display: none;" />
-
-                  <rect id="svg-obj-square" x="100" y="100" width="300" height="120" fill="#2a9d8f" fill-opacity="0.65"
-                    stroke="#1d665f" stroke-width="2" rx="6" style="display: none;" />
+                  <!-- Beaker glass liquid fill -->
+                  <rect x="408" y="475" width="64" height="235" fill="#2364aa" fill-opacity="0.35" rx="3" />
+                  <!-- Beaker glass outline with top lip -->
+                  <path d="M 395 470 L 406 475 L 406 712 Q 406 720 414 720 L 466 720 Q 474 720 474 712 L 474 475 L 485 470"
+                    fill="none" stroke="#fec601" stroke-width="3" stroke-linecap="round" />
+                  <!-- Measurement graduation marks -->
+                  <line x1="406" y1="520" x2="422" y2="520" stroke="#fec601" stroke-width="1.5" />
+                  <line x1="406" y1="570" x2="418" y2="570" stroke="#fec601" stroke-width="1.5" />
+                  <line x1="406" y1="620" x2="422" y2="620" stroke="#fec601" stroke-width="1.5" />
+                  <line x1="406" y1="670" x2="418" y2="670" stroke="#fec601" stroke-width="1.5" />
+                  <!-- Liquid meniscus level -->
+                  <line x1="408" y1="520" x2="472" y2="520" stroke="#73bfb8" stroke-width="2" stroke-dasharray="3,2" />
                 </g>
 
                 <g id="caliper-assembly">
+
+                  <!-- Jaw Test Objects: Clamped between the jaws (rotates with caliper) -->
+                  <g id="svg-test-objects">
+                    <rect id="svg-obj-cyl-out" x="100" y="100" width="240" height="120" fill="url(#metal-grad)"
+                      stroke="#585966" stroke-width="1.5" rx="8" style="display: none;" />
+
+                    <g id="svg-obj-cyl-in" style="display: none;">
+                      <rect x="90" y="15" width="10" height="45" fill="url(#metal-grad)" stroke="#585966"
+                        stroke-width="1" />
+                      <rect x="250" y="15" width="10" height="45" fill="url(#metal-grad)" stroke="#585966"
+                        stroke-width="1" />
+                      <rect x="90" y="15" width="170" height="6" fill="url(#metal-grad)" opacity="0.8" />
+                      <rect x="90" y="54" width="170" height="6" fill="url(#metal-grad)" opacity="0.8" />
+                    </g>
+
+                    <rect id="svg-obj-rect" x="100" y="100" width="425" height="120" fill="url(#wood-grad)"
+                      stroke="#5c3f2b" stroke-width="1.5" rx="4" style="display: none;" />
+
+                    <rect id="svg-obj-square" x="100" y="100" width="300" height="120" fill="#2a9d8f" fill-opacity="0.65"
+                      stroke="#1d665f" stroke-width="2" rx="6" style="display: none;" />
+                  </g>
 
                   <rect x="50" y="60" width="700" height="40" fill="#d1d1d6" stroke="#4e4e54" stroke-width="1.5" />
 
@@ -284,7 +291,7 @@
             </svg>
           </div>
           <div class="test-objects-panel"
-            style="margin-top: 1.5rem; background: #16051a; border: 1px solid var(--panel-border); padding: 1.2rem; border-radius: 6px;">
+            style="margin-top: 1.5rem; background: #091b2c; border: 1px solid var(--panel-border); padding: 1.2rem; border-radius: 6px;">
             <h3 style="font-family: 'Cinzel', serif; color: var(--accent); margin-bottom: 0.8rem; font-size: 1.1rem;">
               Test Objects Tray</h3>
             <div style="display: flex; gap: 0.8rem; flex-wrap: wrap;">
@@ -313,10 +320,10 @@
               <span style="font-size: 0.75rem; color: var(--text-muted);">0 mm</span>
               <div style="display: flex; gap: 0.4rem; align-items: center;">
                 <button class="cal-btn-mini" id="vernier-step-dec" title="Step -0.1 mm"
-                  style="padding: 2px 8px; font-size: 0.8rem; background: #25092a; border: 1px solid var(--panel-border); color: var(--accent); border-radius: 3px; cursor: pointer;">-
+                  style="padding: 2px 8px; font-size: 0.8rem; background: #0e2942; border: 1px solid var(--panel-border); color: var(--accent); border-radius: 3px; cursor: pointer;">-
                   0.1</button>
                 <button class="cal-btn-mini" id="vernier-step-inc" title="Step +0.1 mm"
-                  style="padding: 2px 8px; font-size: 0.8rem; background: #25092a; border: 1px solid var(--panel-border); color: var(--accent); border-radius: 3px; cursor: pointer;">+
+                  style="padding: 2px 8px; font-size: 0.8rem; background: #0e2942; border: 1px solid var(--panel-border); color: var(--accent); border-radius: 3px; cursor: pointer;">+
                   0.1</button>
               </div>
               <span style="font-size: 0.75rem; color: var(--text-muted);">60 mm</span>
@@ -355,57 +362,46 @@
               <span>Calculate</span>
             </button>
             <button id="vernier-reset-btn" class="action-btn"
-              style="flex: 1; padding: 0.6rem; text-align: center; justify-content: center; background: #25092a; color: var(--text-muted); border-color: var(--panel-border);">
+              style="flex: 1; padding: 0.6rem; text-align: center; justify-content: center; background: #0e2942; color: var(--text-muted); border-color: var(--panel-border);">
               <span>Reset</span>
             </button>
           </div>
 
           <div class="readout" id="vernier-readout-box">
-            <div class="readout-row">
-              <span>Least Count (LC):</span>
-              <span style="color: var(--accent); font-weight: 600;">0.1 mm (0.01 cm)</span>
+            <div class="readout-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.9rem; border-bottom: 1px solid var(--panel-border); padding-bottom: 0.6rem;">
+              <span style="font-family: 'Cinzel', serif; font-size: 0.95rem; color: var(--accent); font-weight: 600; letter-spacing: 0.5px;">Live Readout</span>
+              <span id="vernier-truth-badge" class="badge-truth" style="font-size: 0.72rem; padding: 2px 8px; border-radius: 4px; background: rgba(39, 174, 96, 0.2); color: #2ecc71; border: 1px solid #27ae60; font-weight: 600; letter-spacing: 0.5px;">READING TRUE</span>
             </div>
             <div class="readout-row">
-              <span>Main Scale Reading (MSR):</span>
+              <span>Least Count (LC):</span>
+              <span style="color: var(--accent); font-weight: 600;">0.1 mm</span>
+            </div>
+            <div class="readout-row">
+              <span>Main Scale (MSR):</span>
               <span id="vernier-msr">10.0 mm</span>
             </div>
             <div class="readout-row">
-              <span>Vernier Coincidence (VSD):</span>
+              <span>Vernier Div (VSD):</span>
               <span id="vernier-vsd-display">0</span>
             </div>
             <div class="readout-row">
-              <span>Vernier Scale Reading (VSR):</span>
+              <span>Vernier Scale (VSR):</span>
               <span id="vernier-vsr">0.0 mm</span>
             </div>
             <div class="readout-row">
-              <span>Observed Reading (MSR + VSR):</span>
+              <span>Observed Reading:</span>
               <span id="vernier-observed">10.0 mm</span>
             </div>
             <div class="readout-row">
               <span>Zero Error:</span>
               <span id="vernier-error-display">0.0 mm</span>
             </div>
-            <div class="readout-row">
-              <span>Corrected Reading:</span>
-              <span id="vernier-corrected">10.0 mm</span>
-            </div>
-          </div>
-
-          <!-- Step-by-Step Calculation Box -->
-          <div class="calc-steps-card"
-            style="margin-top: 1.2rem; background: #120315; border: 1px solid var(--panel-border); border-radius: 6px; padding: 1rem; font-size: 0.88rem;">
-            <h4
-              style="color: var(--accent); font-family: 'Cinzel', serif; margin-bottom: 0.6rem; display: flex; justify-content: space-between; align-items: center;">
-              <span>Step-by-Step Formulation</span>
-              <span id="vernier-truth-badge" class="badge-truth"
-                style="font-size: 0.75rem; padding: 2px 8px; border-radius: 4px; background: rgba(39, 174, 96, 0.2); color: #2ecc71; border: 1px solid #27ae60;">READING
-                TRUE</span>
-            </h4>
-            <div id="vernier-steps-content"
-              style="display: flex; flex-direction: column; gap: 0.4rem; color: var(--text-muted); font-family: monospace; font-size: 0.85rem;">
-              <div>1. Observed = MSR + (VSD × LC) = 10.0 + (0 × 0.1) = 10.0 mm</div>
-              <div>2. Zero Correction = Observed - (Zero Error) = 10.0 - 0.0 = 10.0 mm</div>
-              <div style="color: var(--accent); font-weight: bold;">Result: Corrected Thickness = 10.0 mm (1.00 cm)
+            <div class="readout-divider" style="margin: 0.8rem 0; border-top: 1px dashed var(--panel-border);"></div>
+            <div class="readout-row corrected-row" style="align-items: center; justify-content: space-between; padding-top: 0.2rem;">
+              <span style="font-weight: 700; color: var(--accent); font-size: 0.95rem;">Corrected Reading:</span>
+              <div class="flap-container-wrapper" style="display: flex; align-items: center; gap: 0.3rem;">
+                <div id="vernier-corrected-flap" class="split-flap-board"></div>
+                <span id="vernier-corrected" style="display: none;">10.0 mm</span>
               </div>
             </div>
           </div>
@@ -413,34 +409,50 @@
         </div>
       </div>
 
-
-
-      <!-- Educational & Formula Cards -->
+      <!-- Educational & Formula Cards in Authentic Mathematical Typography -->
       <div class="iks-grid" style="margin-top: 2rem;">
-        <div class="iks-item">
-          <h3>Vernier Caliper Formulas</h3>
-          <p><strong>Least Count (LC):</strong> <code>LC = 1 MSD − 1 VSD = 1 mm − 0.9 mm = 0.1 mm</code></p>
-          <p style="margin-top: 0.6rem;"><strong>Observed Reading:</strong> <code>Observed = MSR + (VSR × LC)</code></p>
-          <p style="margin-top: 0.6rem;"><strong>Corrected Reading:</strong>
-            <code>Corrected = Observed Reading − Zero Error</code></p>
-          <p style="margin-top: 0.6rem; font-size: 0.85rem; color: var(--text-muted);">
-            <em>Note:</em> When Zero Error is positive (+e), the zero mark of the vernier scale is ahead (to the right)
-            of main scale 0; hence subtracted. When negative (-e), it is behind (to the left), so subtracting a negative
-            adds the correction.
+        <div class="iks-item math-panel">
+          <h3 style="color: var(--accent); font-family: 'Cinzel', serif; margin-bottom: 1.2rem; border-bottom: 1px solid var(--panel-border); padding-bottom: 0.5rem;">Vernier Caliper Mathematical Formulation</h3>
+          
+          <div class="math-block" style="margin-bottom: 1.2rem;">
+            <div class="math-heading" style="font-weight: 600; color: var(--text-main); margin-bottom: 0.3rem;">1. Least Count (LC):</div>
+            <div class="math-eq katex-eq" style="background: rgba(7, 21, 36, 0.7); padding: 0.8rem 1rem; border-radius: 6px; border: 1px solid var(--panel-border); font-size: 1.05rem; overflow-x: auto;">
+              $$\text{LC} = 1\text{ MSD} - 1\text{ VSD} = \frac{1\text{ MSD}}{\text{Total Vernier Divisions}} = \frac{1\text{ mm}}{10} = 0.1\text{ mm}$$
+            </div>
+          </div>
+
+          <div class="math-block" style="margin-bottom: 1.2rem;">
+            <div class="math-heading" style="font-weight: 600; color: var(--text-main); margin-bottom: 0.3rem;">2. Observed Reading:</div>
+            <div class="math-eq katex-eq" style="background: rgba(7, 21, 36, 0.7); padding: 0.8rem 1rem; border-radius: 6px; border: 1px solid var(--panel-border); font-size: 1.05rem; overflow-x: auto;">
+              $$\text{Observed Reading} = \text{MSR} + \Big(\text{VSD} \times \text{LC}\Big)$$
+            </div>
+          </div>
+
+          <div class="math-block" style="margin-bottom: 1.2rem;">
+            <div class="math-heading" style="font-weight: 600; color: var(--text-main); margin-bottom: 0.3rem;">3. Corrected Reading:</div>
+            <div class="math-eq katex-eq" style="background: rgba(7, 21, 36, 0.7); padding: 0.8rem 1rem; border-radius: 6px; border: 1px solid var(--panel-border); font-size: 1.05rem; overflow-x: auto;">
+              $$\text{Corrected Reading} = \text{Observed Reading} - \Big(\pm\text{Zero Error}\Big)$$
+            </div>
+          </div>
+
+          <p style="margin-top: 0.8rem; font-size: 0.85rem; color: var(--text-muted); line-height: 1.6;">
+            <em>Zero Error Convention:</em> When the zero mark of the vernier scale is ahead (to the right) of main scale 0, the error is <strong>positive (+e)</strong> and is subtracted. When behind (to the left), the error is <strong>negative (-e)</strong> and subtracting it adds the correction.
           </p>
         </div>
 
         <div class="iks-item">
-          <h3>What is a Vernier Caliper?</h3>
+          <h3 style="color: var(--accent); font-family: 'Cinzel', serif; margin-bottom: 1.2rem; border-bottom: 1px solid var(--panel-border); padding-bottom: 0.5rem;">What is a Vernier Caliper?</h3>
           <p>
-            A <strong>Vernier Caliper</strong> is a precision measuring instrument invented by French mathematician
-            Pierre Vernier in 1631. It is designed to measure internal and external diameters, lengths, and depths of
-            objects with high accuracy.
+            A <strong>Vernier Caliper</strong> is a high-precision mechanical metrology instrument invented by French mathematician <strong>Pierre Vernier</strong> in 1631. It is engineered to measure external dimensions, internal bores, and depths with a resolution of 0.1 mm.
           </p>
           <p style="margin-top: 0.8rem;">
-            <strong>Principle:</strong> It makes use of two scales sliding over each other — the Main Scale and the
-            Vernier Scale. 10 divisions on the Vernier scale coincide with 9 divisions on the Main Scale, granting a
-            precision 10 times finer than the smallest division of the main scale.
+            <strong>Principle of Vernier Coincidence:</strong> It utilizes two co-axial scales where $10$ divisions of the sliding Vernier scale coincide precisely with $9$ divisions of the stationary Main Scale:
+          </p>
+          <div class="math-eq katex-eq" style="background: rgba(7, 21, 36, 0.7); padding: 0.7rem 1rem; border-radius: 6px; border: 1px solid var(--panel-border); margin: 0.8rem 0; font-size: 1rem; overflow-x: auto;">
+            $$10\text{ VSD} = 9\text{ MSD} \implies 1\text{ VSD} = \frac{9}{10}\text{ mm} = 0.9\text{ mm}$$
+          </div>
+          <p style="font-size: 0.88rem; color: var(--text-muted); line-height: 1.6;">
+            This differential relationship provides an accuracy $10\times$ finer than the smallest 1 mm graduation of the main scale.
           </p>
         </div>
       </div>
@@ -455,16 +467,16 @@
               <button class="zoom-btn" id="screw-zoom-out">-</button>
             </div>
             <svg id="screw-svg" viewBox="0 0 800 250">
-              <path d="M 50 70 L 150 70 A 50 50 0 0 1 150 170 L 50 170" fill="none" stroke="#3b1742" stroke-width="25"
+              <path d="M 50 70 L 150 70 A 50 50 0 0 1 150 170 L 50 170" fill="none" stroke="#16395b" stroke-width="25"
                 stroke-linecap="round" />
-              <rect x="180" y="105" width="200" height="30" fill="#302035" stroke="#3b1742" stroke-width="2" />
+              <rect x="180" y="105" width="200" height="30" fill="#0c2033" stroke="#1a4267" stroke-width="2" />
               <g id="screw-main-ticks"></g>
               <g id="spindle">
-                <rect x="80" y="110" width="100" height="20" fill="#605068" />
+                <rect x="80" y="110" width="100" height="20" fill="#738da0" />
               </g>
               <g id="thimble" style="cursor: grab;">
-                <rect x="0" y="90" width="100" height="60" fill="#4d124b" stroke="#9d2b8b" stroke-width="2" />
-                <rect x="100" y="100" width="80" height="40" fill="#751b72" stroke="#9d2b8b" stroke-width="2" />
+                <rect x="0" y="90" width="100" height="60" fill="#1b4d75" stroke="#3da5d9" stroke-width="2" />
+                <rect x="100" y="100" width="80" height="40" fill="#2364aa" stroke="#3da5d9" stroke-width="2" />
                 <g id="circular-ticks"></g>
               </g>
             </svg>
@@ -497,9 +509,12 @@
               <span>Observed Value:</span>
               <span id="screw-observed">0.00 mm</span>
             </div>
-            <div class="readout-row">
-              <span>Corrected Value:</span>
-              <span id="screw-corrected">0.00 mm</span>
+            <div class="readout-row corrected-row" style="align-items: center; justify-content: space-between; padding-top: 0.2rem;">
+              <span style="font-weight: 700; color: var(--accent); font-size: 0.95rem;">Corrected Value:</span>
+              <div class="flap-container-wrapper" style="display: flex; align-items: center; gap: 0.3rem;">
+                <div id="screw-corrected-flap" class="split-flap-board"></div>
+                <span id="screw-corrected" style="display: none;">0.00 mm</span>
+              </div>
             </div>
           </div>
         </div>
@@ -516,17 +531,17 @@
               <button class="zoom-btn" id="sph-zoom-out">-</button>
             </div>
             <svg id="spherometer-svg" viewBox="0 0 800 250">
-              <path id="spherometer-base" d="M 200 220 L 600 220" stroke="#3b1742" stroke-width="8"
+              <path id="spherometer-base" d="M 200 220 L 600 220" stroke="#16395b" stroke-width="8"
                 stroke-linecap="round" />
-              <line x1="280" y1="120" x2="280" y2="220" stroke="#c9b1d6" stroke-width="6" />
-              <line x1="520" y1="120" x2="520" y2="220" stroke="#c9b1d6" stroke-width="6" />
+              <line x1="280" y1="120" x2="280" y2="220" stroke="#73bfb8" stroke-width="6" />
+              <line x1="520" y1="120" x2="520" y2="220" stroke="#73bfb8" stroke-width="6" />
               <g id="spherometer-frame">
-                <rect x="250" y="80" width="300" height="40" fill="#302035" stroke="#3b1742" stroke-width="2" />
-                <line x1="400" y1="30" x2="400" y2="220" stroke="#a0309c" stroke-width="4" stroke-dasharray="2,2" />
+                <rect x="250" y="80" width="300" height="40" fill="#0c2033" stroke="#1a4267" stroke-width="2" />
+                <line x1="400" y1="30" x2="400" y2="220" stroke="#3da5d9" stroke-width="4" stroke-dasharray="2,2" />
               </g>
               <g id="spherometer-screw" style="cursor: grab;">
-                <line x1="400" y1="40" x2="400" y2="220" stroke="#e5b842" stroke-width="8" />
-                <circle cx="400" cy="80" r="35" fill="#4d124b" stroke="#9d2b8b" stroke-width="2" />
+                <line x1="400" y1="40" x2="400" y2="220" stroke="#fec601" stroke-width="8" />
+                <circle cx="400" cy="80" r="35" fill="#2364aa" stroke="#3da5d9" stroke-width="2" />
                 <g id="disc-ticks"></g>
               </g>
             </svg>
@@ -559,9 +574,12 @@
               <span>Least Count:</span>
               <span>0.01 mm</span>
             </div>
-            <div class="readout-row">
-              <span>Corrected Height (h):</span>
-              <span id="spherometer-h-val">0.00 mm</span>
+            <div class="readout-row corrected-row" style="align-items: center; justify-content: space-between; padding-top: 0.2rem;">
+              <span style="font-weight: 700; color: var(--accent); font-size: 0.95rem;">Corrected Height (h):</span>
+              <div class="flap-container-wrapper" style="display: flex; align-items: center; gap: 0.3rem;">
+                <div id="spherometer-h-flap" class="split-flap-board"></div>
+                <span id="spherometer-h-val" style="display: none;">0.00 mm</span>
+              </div>
             </div>
             <div class="readout-row">
               <span>Radius of Curvature (R):</span>
