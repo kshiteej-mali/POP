@@ -1,12 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Physics SLA: Metrology & Indian Knowledge System</title>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Outfit:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Outfit:wght@300;400;500;700&display=swap"
+    rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
   <header>
     <div class="logo" style="font-family: 'Cinzel', serif;">GROUP <span class="caret">^</span>6</div>
@@ -55,15 +59,18 @@
 
     <section id="about" class="section">
       <div class="iks-card" style="max-width: 800px; margin: 0 auto;">
-        <h2 style="font-family: 'Cinzel', serif; text-align: center; margin-bottom: 2rem; color: var(--accent);">About the Project & Team</h2>
-        <p style="text-align: center; margin-bottom: 2.5rem; color: var(--text-muted); font-size: 1.1rem; line-height: 1.6;">
-          This Metrology Simulator & Indian Knowledge System suite was developed as a Physics SLA Project for Sem-1. 
+        <h2 style="font-family: 'Cinzel', serif; text-align: center; margin-bottom: 2rem; color: var(--accent);">About
+          the Project & Team</h2>
+        <p
+          style="text-align: center; margin-bottom: 2.5rem; color: var(--text-muted); font-size: 1.1rem; line-height: 1.6;">
+          This Metrology Simulator & Indian Knowledge System suite was developed as a Physics SLA Project for Sem-1.
           It combines high-precision mechanical instrument simulations with ancient Indian metrological history.
         </p>
-        
+
         <div class="iks-grid" style="grid-template-columns: 1fr; gap: 1.5rem;">
           <div class="iks-item">
-            <h3 style="border-bottom: 1px solid var(--panel-border); padding-bottom: 0.5rem; margin-bottom: 1rem;">Project Contributions</h3>
+            <h3 style="border-bottom: 1px solid var(--panel-border); padding-bottom: 0.5rem; margin-bottom: 1rem;">
+              Project Contributions</h3>
             <table class="iks-table">
               <thead>
                 <tr>
@@ -106,8 +113,11 @@
     <section id="iks" class="section">
       <div class="iks-card">
         <h2 style="font-family: 'Cinzel', serif;">Indian Knowledge System (IKS) on Metrology</h2>
-        <p>Measurement (Māna) has been fundamental to Indian civilization since the Vedic period. The Sulba Sutras (c. 800–500 BCE) detail precise geometric measurements for constructing fire altars. Kautilya's Arthashastra (c. 4th Century BCE) contains dedicated chapters on weights, measures, and standards of length, establishing standard units from the subatomic scale up to geographic distances.</p>
-        
+        <p>Measurement (Māna) has been fundamental to Indian civilization since the Vedic period. The Sulba Sutras (c.
+          800–500 BCE) detail precise geometric measurements for constructing fire altars. Kautilya's Arthashastra (c.
+          4th Century BCE) contains dedicated chapters on weights, measures, and standards of length, establishing
+          standard units from the subatomic scale up to geographic distances.</p>
+
         <div class="iks-grid">
           <div class="iks-item">
             <h3>Standard Linear Units (Arthashastra)</h3>
@@ -129,7 +139,7 @@
                   <td>Liksha</td>
                   <td>8 Paramanus</td>
                   <td>~ 0.25 mm</td>
-                  </tr>
+                </tr>
                 <tr>
                   <td>Yuka</td>
                   <td>8 Likshas</td>
@@ -155,9 +165,13 @@
           </div>
           <div class="iks-item">
             <h3>Ancient Measurement Instruments</h3>
-            <p><strong>Sutra (Measuring Cord):</strong> Used in Vedic times for high-precision geometry, temple layouts, and altar planning. It served as a flexible linear standard.</p>
-            <p style="margin-top: 1rem;"><strong>Shanku (Gnomon):</strong> A vertical rod used to find directions, local time, and geographical coordinates. Its shadow length served as a celestial calculator.</p>
-            <p style="margin-top: 1rem;"><strong>Yasti Yantra (Measuring Staff):</strong> Described by Lalla and Bhaskara II, it was a calibrated staff used to determine heights and angular distances of astronomical bodies.</p>
+            <p><strong>Sutra (Measuring Cord):</strong> Used in Vedic times for high-precision geometry, temple layouts,
+              and altar planning. It served as a flexible linear standard.</p>
+            <p style="margin-top: 1rem;"><strong>Shanku (Gnomon):</strong> A vertical rod used to find directions, local
+              time, and geographical coordinates. Its shadow length served as a celestial calculator.</p>
+            <p style="margin-top: 1rem;"><strong>Yasti Yantra (Measuring Staff):</strong> Described by Lalla and
+              Bhaskara II, it was a calibrated staff used to determine heights and angular distances of astronomical
+              bodies.</p>
           </div>
         </div>
       </div>
@@ -172,7 +186,9 @@
               <button class="zoom-btn" id="vernier-zoom-in">+</button>
               <button class="zoom-btn" id="vernier-zoom-out">-</button>
             </div>
-            <button id="vernier-mode-btn" class="action-btn" style="position: absolute; top: 15px; right: 15px; z-index: 10; background: var(--accent); color: #0b020c; border-color: var(--accent);">Flip to Depth Mode</button>
+            <button id="vernier-mode-btn" class="action-btn"
+              style="position: absolute; top: 15px; right: 15px; z-index: 10; background: var(--accent); color: #0b020c; border-color: var(--accent);">Flip
+              to Depth Mode</button>
             <svg id="vernier-svg" viewBox="-50 -100 900 450">
               <defs>
                 <linearGradient id="metal-grad" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -187,99 +203,121 @@
                 </linearGradient>
               </defs>
               <g id="vernier-viewport">
-                
+
                 <g id="depth-beaker" style="display: none; opacity: 0;">
-                  
-                  <rect x="722" y="140" width="56" height="138" fill="#1b4d75" fill-opacity="0.6"/>
-                  
-                  <path d="M 720 80 L 720 280 L 780 280 L 780 80" fill="none" stroke="#e5b842" stroke-width="3" stroke-linecap="round"/>
-                  
-                  <line x1="720" y1="130" x2="735" y2="130" stroke="#e5b842" stroke-width="1.5"/>
-                  <line x1="720" y1="180" x2="735" y2="180" stroke="#e5b842" stroke-width="1.5"/>
-                  <line x1="720" y1="230" x2="735" y2="230" stroke="#e5b842" stroke-width="1.5"/>
+
+                  <rect x="722" y="140" width="56" height="138" fill="#1b4d75" fill-opacity="0.6" />
+
+                  <path d="M 720 80 L 720 280 L 780 280 L 780 80" fill="none" stroke="#e5b842" stroke-width="3"
+                    stroke-linecap="round" />
+
+                  <line x1="720" y1="130" x2="735" y2="130" stroke="#e5b842" stroke-width="1.5" />
+                  <line x1="720" y1="180" x2="735" y2="180" stroke="#e5b842" stroke-width="1.5" />
+                  <line x1="720" y1="230" x2="735" y2="230" stroke="#e5b842" stroke-width="1.5" />
                 </g>
 
-                
+
                 <g id="svg-test-objects">
-                  
-                  <rect id="svg-obj-cyl-out" x="100" y="100" width="240" height="120" fill="url(#metal-grad)" stroke="#585966" stroke-width="1.5" rx="8" style="display: none;"/>
-                  
+
+                  <rect id="svg-obj-cyl-out" x="100" y="100" width="240" height="120" fill="url(#metal-grad)"
+                    stroke="#585966" stroke-width="1.5" rx="8" style="display: none;" />
+
                   <g id="svg-obj-cyl-in" style="display: none;">
-                    <rect x="90" y="15" width="10" height="45" fill="url(#metal-grad)" stroke="#585966" stroke-width="1"/>
-                    <rect x="250" y="15" width="10" height="45" fill="url(#metal-grad)" stroke="#585966" stroke-width="1"/>
-                    <rect x="90" y="15" width="170" height="6" fill="url(#metal-grad)" opacity="0.8"/>
-                    <rect x="90" y="54" width="170" height="6" fill="url(#metal-grad)" opacity="0.8"/>
+                    <rect x="90" y="15" width="10" height="45" fill="url(#metal-grad)" stroke="#585966"
+                      stroke-width="1" />
+                    <rect x="250" y="15" width="10" height="45" fill="url(#metal-grad)" stroke="#585966"
+                      stroke-width="1" />
+                    <rect x="90" y="15" width="170" height="6" fill="url(#metal-grad)" opacity="0.8" />
+                    <rect x="90" y="54" width="170" height="6" fill="url(#metal-grad)" opacity="0.8" />
                   </g>
-                  
-                  <rect id="svg-obj-rect" x="100" y="100" width="425" height="120" fill="url(#wood-grad)" stroke="#5c3f2b" stroke-width="1.5" rx="4" style="display: none;"/>
-                  
-                  <rect id="svg-obj-square" x="100" y="100" width="300" height="120" fill="#2a9d8f" fill-opacity="0.65" stroke="#1d665f" stroke-width="2" rx="6" style="display: none;"/>
+
+                  <rect id="svg-obj-rect" x="100" y="100" width="425" height="120" fill="url(#wood-grad)"
+                    stroke="#5c3f2b" stroke-width="1.5" rx="4" style="display: none;" />
+
+                  <rect id="svg-obj-square" x="100" y="100" width="300" height="120" fill="#2a9d8f" fill-opacity="0.65"
+                    stroke="#1d665f" stroke-width="2" rx="6" style="display: none;" />
                 </g>
 
                 <g id="caliper-assembly">
-                  
-                  <rect x="50" y="60" width="700" height="40" fill="#d1d1d6" stroke="#4e4e54" stroke-width="1.5"/>
-                  
-                  <path d="M 70 60 L 85 15 L 100 15 L 100 60 Z" fill="#d1d1d6" stroke="#4e4e54" stroke-width="1.5"/>
-                  
-                  <path d="M 60 100 L 60 220 L 100 220 L 100 100 Z" fill="#d1d1d6" stroke="#4e4e54" stroke-width="1.5"/>
-                  
+
+                  <rect x="50" y="60" width="700" height="40" fill="#d1d1d6" stroke="#4e4e54" stroke-width="1.5" />
+
+                  <path d="M 70 60 L 85 15 L 100 15 L 100 60 Z" fill="#d1d1d6" stroke="#4e4e54" stroke-width="1.5" />
+
+                  <path d="M 60 100 L 60 220 L 100 220 L 100 100 Z" fill="#d1d1d6" stroke="#4e4e54"
+                    stroke-width="1.5" />
+
                   <g id="main-ticks"></g>
-                  
-                  
+
+
                   <g id="vernier-slider" style="cursor: grab;">
-                    
-                    <rect id="depth-blade" x="150" y="78" width="510" height="4" fill="#a8a8b0" stroke="#4e4e54" stroke-width="0.5"/>
-                    
-                    <rect x="140" y="25" width="20" height="15" fill="#a8a8b0" stroke="#4e4e54" stroke-width="1.5" rx="3"/>
-                    <line x1="150" y1="40" x2="150" y2="50" stroke="#4e4e54" stroke-width="3"/>
-                    
-                    
-                    
-                    <rect x="90" y="50" width="50" height="80" fill="#b0b0b8" stroke="#4e4e54" stroke-width="1.5"/>
-                    
-                    <rect x="245" y="50" width="15" height="80" fill="#b0b0b8" stroke="#4e4e54" stroke-width="1.5"/>
-                    
-                    <rect x="140" y="50" width="105" height="10" fill="#b0b0b8" stroke="#4e4e54" stroke-width="1.5"/>
-                    
-                    <rect x="140" y="100" width="105" height="30" fill="#b0b0b8" stroke="#4e4e54" stroke-width="1.5"/>
-                    
-                    
-                    <path d="M 100 60 L 100 15 L 115 15 L 130 60 Z" fill="#b0b0b8" stroke="#4e4e54" stroke-width="1.5"/>
-                    
-                    <path d="M 100 100 L 100 220 L 140 220 L 140 100 Z" fill="#b0b0b8" stroke="#4e4e54" stroke-width="1.5"/>
-                    
-                    
+
+                    <rect id="depth-blade" x="150" y="78" width="510" height="4" fill="#a8a8b0" stroke="#4e4e54"
+                      stroke-width="0.5" />
+
+                    <rect x="140" y="25" width="20" height="15" fill="#a8a8b0" stroke="#4e4e54" stroke-width="1.5"
+                      rx="3" />
+                    <line x1="150" y1="40" x2="150" y2="50" stroke="#4e4e54" stroke-width="3" />
+
+
+
+                    <rect x="90" y="50" width="50" height="80" fill="#b0b0b8" stroke="#4e4e54" stroke-width="1.5" />
+
+                    <rect x="245" y="50" width="15" height="80" fill="#b0b0b8" stroke="#4e4e54" stroke-width="1.5" />
+
+                    <rect x="140" y="50" width="105" height="10" fill="#b0b0b8" stroke="#4e4e54" stroke-width="1.5" />
+
+                    <rect x="140" y="100" width="105" height="30" fill="#b0b0b8" stroke="#4e4e54" stroke-width="1.5" />
+
+
+                    <path d="M 100 60 L 100 15 L 115 15 L 130 60 Z" fill="#b0b0b8" stroke="#4e4e54"
+                      stroke-width="1.5" />
+
+                    <path d="M 100 100 L 100 220 L 140 220 L 140 100 Z" fill="#b0b0b8" stroke="#4e4e54"
+                      stroke-width="1.5" />
+
+
                     <g id="vernier-ticks"></g>
                   </g>
                 </g>
               </g>
             </svg>
           </div>
-          <div class="test-objects-panel" style="margin-top: 1.5rem; background: #16051a; border: 1px solid var(--panel-border); padding: 1.2rem; border-radius: 6px;">
-            <h3 style="font-family: 'Cinzel', serif; color: var(--accent); margin-bottom: 0.8rem; font-size: 1.1rem;">Test Objects Tray</h3>
+          <div class="test-objects-panel"
+            style="margin-top: 1.5rem; background: #16051a; border: 1px solid var(--panel-border); padding: 1.2rem; border-radius: 6px;">
+            <h3 style="font-family: 'Cinzel', serif; color: var(--accent); margin-bottom: 0.8rem; font-size: 1.1rem;">
+              Test Objects Tray</h3>
             <div style="display: flex; gap: 0.8rem; flex-wrap: wrap;">
               <button class="action-btn active" id="obj-none-btn" style="padding: 0.5rem 1rem;">None</button>
-              <button class="action-btn" id="obj-cyl-out-btn" style="padding: 0.5rem 1rem;">Cylinder (Outer Dia)</button>
+              <button class="action-btn" id="obj-cyl-out-btn" style="padding: 0.5rem 1rem;">Cylinder (Outer
+                Dia)</button>
               <button class="action-btn" id="obj-cyl-in-btn" style="padding: 0.5rem 1rem;">Cylinder (Inner Dia)</button>
               <button class="action-btn" id="obj-rect-btn" style="padding: 0.5rem 1rem;">Wooden Block (Rect)</button>
               <button class="action-btn" id="obj-sq-btn" style="padding: 0.5rem 1rem;">Acrylic Block (Square)</button>
-              <button class="action-btn" id="obj-depth-btn" style="padding: 0.5rem 1rem; border-color: var(--accent); color: var(--accent);">Depth Jar (Liquid Beaker)</button>
+              <button class="action-btn" id="obj-depth-btn"
+                style="padding: 0.5rem 1rem; border-color: var(--accent); color: var(--accent);">Depth Jar (Liquid
+                Beaker)</button>
             </div>
-            <p id="object-desc" style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.8rem; line-height: 1.4;">Drag the slider or adjust inputs to measure freely.</p>
+            <p id="object-desc"
+              style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.8rem; line-height: 1.4;">Drag the
+              slider or adjust inputs to measure freely.</p>
           </div>
         </div>
         <div class="pull-out-panel">
           <h3>Controls & Calculation</h3>
-          
+
           <div class="form-group">
             <label for="vernier-val">Fine Adjust Slider (Direct Jaw Opening mm)</label>
             <input type="range" id="vernier-val" min="0" max="60" step="0.1" value="10">
             <div style="display: flex; justify-content: space-between; margin-top: 0.25rem;">
               <span style="font-size: 0.75rem; color: var(--text-muted);">0 mm</span>
               <div style="display: flex; gap: 0.4rem; align-items: center;">
-                <button class="cal-btn-mini" id="vernier-step-dec" title="Step -0.1 mm" style="padding: 2px 8px; font-size: 0.8rem; background: #25092a; border: 1px solid var(--panel-border); color: var(--accent); border-radius: 3px; cursor: pointer;">- 0.1</button>
-                <button class="cal-btn-mini" id="vernier-step-inc" title="Step +0.1 mm" style="padding: 2px 8px; font-size: 0.8rem; background: #25092a; border: 1px solid var(--panel-border); color: var(--accent); border-radius: 3px; cursor: pointer;">+ 0.1</button>
+                <button class="cal-btn-mini" id="vernier-step-dec" title="Step -0.1 mm"
+                  style="padding: 2px 8px; font-size: 0.8rem; background: #25092a; border: 1px solid var(--panel-border); color: var(--accent); border-radius: 3px; cursor: pointer;">-
+                  0.1</button>
+                <button class="cal-btn-mini" id="vernier-step-inc" title="Step +0.1 mm"
+                  style="padding: 2px 8px; font-size: 0.8rem; background: #25092a; border: 1px solid var(--panel-border); color: var(--accent); border-radius: 3px; cursor: pointer;">+
+                  0.1</button>
               </div>
               <span style="font-size: 0.75rem; color: var(--text-muted);">60 mm</span>
             </div>
@@ -312,10 +350,12 @@
           </div>
 
           <div style="display: flex; gap: 0.8rem; margin: 1rem 0;">
-            <button id="vernier-calc-btn" class="action-btn active" style="flex: 1; padding: 0.6rem; text-align: center; justify-content: center; display: flex; align-items: center; gap: 0.4rem;">
+            <button id="vernier-calc-btn" class="action-btn active"
+              style="flex: 1; padding: 0.6rem; text-align: center; justify-content: center; display: flex; align-items: center; gap: 0.4rem;">
               <span>Calculate</span>
             </button>
-            <button id="vernier-reset-btn" class="action-btn" style="flex: 1; padding: 0.6rem; text-align: center; justify-content: center; background: #25092a; color: var(--text-muted); border-color: var(--panel-border);">
+            <button id="vernier-reset-btn" class="action-btn"
+              style="flex: 1; padding: 0.6rem; text-align: center; justify-content: center; background: #25092a; color: var(--text-muted); border-color: var(--panel-border);">
               <span>Reset</span>
             </button>
           </div>
@@ -352,15 +392,21 @@
           </div>
 
           <!-- Step-by-Step Calculation Box -->
-          <div class="calc-steps-card" style="margin-top: 1.2rem; background: #120315; border: 1px solid var(--panel-border); border-radius: 6px; padding: 1rem; font-size: 0.88rem;">
-            <h4 style="color: var(--accent); font-family: 'Cinzel', serif; margin-bottom: 0.6rem; display: flex; justify-content: space-between; align-items: center;">
+          <div class="calc-steps-card"
+            style="margin-top: 1.2rem; background: #120315; border: 1px solid var(--panel-border); border-radius: 6px; padding: 1rem; font-size: 0.88rem;">
+            <h4
+              style="color: var(--accent); font-family: 'Cinzel', serif; margin-bottom: 0.6rem; display: flex; justify-content: space-between; align-items: center;">
               <span>Step-by-Step Formulation</span>
-              <span id="vernier-truth-badge" class="badge-truth" style="font-size: 0.75rem; padding: 2px 8px; border-radius: 4px; background: rgba(39, 174, 96, 0.2); color: #2ecc71; border: 1px solid #27ae60;">READING TRUE</span>
+              <span id="vernier-truth-badge" class="badge-truth"
+                style="font-size: 0.75rem; padding: 2px 8px; border-radius: 4px; background: rgba(39, 174, 96, 0.2); color: #2ecc71; border: 1px solid #27ae60;">READING
+                TRUE</span>
             </h4>
-            <div id="vernier-steps-content" style="display: flex; flex-direction: column; gap: 0.4rem; color: var(--text-muted); font-family: monospace; font-size: 0.85rem;">
+            <div id="vernier-steps-content"
+              style="display: flex; flex-direction: column; gap: 0.4rem; color: var(--text-muted); font-family: monospace; font-size: 0.85rem;">
               <div>1. Observed = MSR + (VSD × LC) = 10.0 + (0 × 0.1) = 10.0 mm</div>
               <div>2. Zero Correction = Observed - (Zero Error) = 10.0 - 0.0 = 10.0 mm</div>
-              <div style="color: var(--accent); font-weight: bold;">Result: Corrected Thickness = 10.0 mm (1.00 cm)</div>
+              <div style="color: var(--accent); font-weight: bold;">Result: Corrected Thickness = 10.0 mm (1.00 cm)
+              </div>
             </div>
           </div>
 
@@ -375,24 +421,30 @@
           <h3>Vernier Caliper Formulas</h3>
           <p><strong>Least Count (LC):</strong> <code>LC = 1 MSD − 1 VSD = 1 mm − 0.9 mm = 0.1 mm</code></p>
           <p style="margin-top: 0.6rem;"><strong>Observed Reading:</strong> <code>Observed = MSR + (VSR × LC)</code></p>
-          <p style="margin-top: 0.6rem;"><strong>Corrected Reading:</strong> <code>Corrected = Observed Reading − Zero Error</code></p>
+          <p style="margin-top: 0.6rem;"><strong>Corrected Reading:</strong>
+            <code>Corrected = Observed Reading − Zero Error</code></p>
           <p style="margin-top: 0.6rem; font-size: 0.85rem; color: var(--text-muted);">
-            <em>Note:</em> When Zero Error is positive (+e), the zero mark of the vernier scale is ahead (to the right) of main scale 0; hence subtracted. When negative (-e), it is behind (to the left), so subtracting a negative adds the correction.
+            <em>Note:</em> When Zero Error is positive (+e), the zero mark of the vernier scale is ahead (to the right)
+            of main scale 0; hence subtracted. When negative (-e), it is behind (to the left), so subtracting a negative
+            adds the correction.
           </p>
         </div>
 
         <div class="iks-item">
           <h3>What is a Vernier Caliper?</h3>
           <p>
-            A <strong>Vernier Caliper</strong> is a precision measuring instrument invented by French mathematician Pierre Vernier in 1631. It is designed to measure internal and external diameters, lengths, and depths of objects with high accuracy.
+            A <strong>Vernier Caliper</strong> is a precision measuring instrument invented by French mathematician
+            Pierre Vernier in 1631. It is designed to measure internal and external diameters, lengths, and depths of
+            objects with high accuracy.
           </p>
           <p style="margin-top: 0.8rem;">
-            <strong>Principle:</strong> It makes use of two scales sliding over each other — the Main Scale and the Vernier Scale. 10 divisions on the Vernier scale coincide with 9 divisions on the Main Scale, granting a precision 10 times finer than the smallest division of the main scale.
+            <strong>Principle:</strong> It makes use of two scales sliding over each other — the Main Scale and the
+            Vernier Scale. 10 divisions on the Vernier scale coincide with 9 divisions on the Main Scale, granting a
+            precision 10 times finer than the smallest division of the main scale.
           </p>
         </div>
       </div>
     </section>
-
     <section id="screw" class="section">
       <div class="grid-container">
         <div class="simulator-box">
@@ -403,15 +455,16 @@
               <button class="zoom-btn" id="screw-zoom-out">-</button>
             </div>
             <svg id="screw-svg" viewBox="0 0 800 250">
-              <path d="M 50 70 L 150 70 A 50 50 0 0 1 150 170 L 50 170" fill="none" stroke="#3b1742" stroke-width="25" stroke-linecap="round"/>
-              <rect x="180" y="105" width="200" height="30" fill="#302035" stroke="#3b1742" stroke-width="2"/>
+              <path d="M 50 70 L 150 70 A 50 50 0 0 1 150 170 L 50 170" fill="none" stroke="#3b1742" stroke-width="25"
+                stroke-linecap="round" />
+              <rect x="180" y="105" width="200" height="30" fill="#302035" stroke="#3b1742" stroke-width="2" />
               <g id="screw-main-ticks"></g>
               <g id="spindle">
                 <rect x="80" y="110" width="100" height="20" fill="#605068" />
               </g>
               <g id="thimble" style="cursor: grab;">
-                <rect x="0" y="90" width="100" height="60" fill="#4d124b" stroke="#9d2b8b" stroke-width="2"/>
-                <rect x="100" y="100" width="80" height="40" fill="#751b72" stroke="#9d2b8b" stroke-width="2"/>
+                <rect x="0" y="90" width="100" height="60" fill="#4d124b" stroke="#9d2b8b" stroke-width="2" />
+                <rect x="100" y="100" width="80" height="40" fill="#751b72" stroke="#9d2b8b" stroke-width="2" />
                 <g id="circular-ticks"></g>
               </g>
             </svg>
@@ -463,16 +516,17 @@
               <button class="zoom-btn" id="sph-zoom-out">-</button>
             </div>
             <svg id="spherometer-svg" viewBox="0 0 800 250">
-              <path id="spherometer-base" d="M 200 220 L 600 220" stroke="#3b1742" stroke-width="8" stroke-linecap="round"/>
-              <line x1="280" y1="120" x2="280" y2="220" stroke="#c9b1d6" stroke-width="6"/>
-              <line x1="520" y1="120" x2="520" y2="220" stroke="#c9b1d6" stroke-width="6"/>
+              <path id="spherometer-base" d="M 200 220 L 600 220" stroke="#3b1742" stroke-width="8"
+                stroke-linecap="round" />
+              <line x1="280" y1="120" x2="280" y2="220" stroke="#c9b1d6" stroke-width="6" />
+              <line x1="520" y1="120" x2="520" y2="220" stroke="#c9b1d6" stroke-width="6" />
               <g id="spherometer-frame">
-                <rect x="250" y="80" width="300" height="40" fill="#302035" stroke="#3b1742" stroke-width="2"/>
-                <line x1="400" y1="30" x2="400" y2="220" stroke="#a0309c" stroke-width="4" stroke-dasharray="2,2"/>
+                <rect x="250" y="80" width="300" height="40" fill="#302035" stroke="#3b1742" stroke-width="2" />
+                <line x1="400" y1="30" x2="400" y2="220" stroke="#a0309c" stroke-width="4" stroke-dasharray="2,2" />
               </g>
               <g id="spherometer-screw" style="cursor: grab;">
-                <line x1="400" y1="40" x2="400" y2="220" stroke="#e5b842" stroke-width="8"/>
-                <circle cx="400" cy="80" r="35" fill="#4d124b" stroke="#9d2b8b" stroke-width="2"/>
+                <line x1="400" y1="40" x2="400" y2="220" stroke="#e5b842" stroke-width="8" />
+                <circle cx="400" cy="80" r="35" fill="#4d124b" stroke="#9d2b8b" stroke-width="2" />
                 <g id="disc-ticks"></g>
               </g>
             </svg>
@@ -520,4 +574,5 @@
   </main>
   <script src="script.js"></script>
 </body>
+
 </html>
