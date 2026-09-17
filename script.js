@@ -187,7 +187,8 @@ function initVernier() {
     // Physical SVG translation:
     // 1. Slider moves by rawVal (actual jaw gap = rawVal mm * 10 SVG units)
     slider.setAttribute('transform', `translate(${rawVal * 10}, 0)`);
-    // 2. Vernier ticks are shifted relative to jaw by zeroError
+    // 2. Vernier ticks are shifted on the slider plate by zeroError so when rawVal = 0,
+    // the vernier 0 mark is offset by zeroError and the corresponding VSD division lines up with the main scale!
     vernierTicksContainer.setAttribute('transform', `translate(${zeroError * 10}, 0)`);
 
     // Backend calculation via VernierEngine
