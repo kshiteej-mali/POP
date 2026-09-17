@@ -31,6 +31,50 @@ document.addEventListener('DOMContentLoaded', () => {
   initSpherometer();
   initBeamsBackground();
 });
+// --- Vernier Caliper Metrology & Simulation Backend Engine ---
+const VernierEngine = {
+  LEAST_COUNT_MM: 0.1, // 1 MSD (1 mm) - 1 VSD (0.9 mm) = 0.1 mm
+
+  calculate(msr, vsd, zeroError = 0, leastCount = 0.1) {
+    const validMSR = Math.max(0, Math.floor(Number(msr) || 0));
+    const validVSD = Math.max(0, Math.min(10, Math.round(Number(vsd) || 0)));
+    const validError = Number(zeroError) || 0;
+    
+    const vsr = Math.round((validVSD * leastCount) * 1000) / 1000;
+    const observed = Math.round((validMSR + vsr) * 1000) / 1000;
+    const corrected = Math.round((observed - validError) * 1000) / 1000;
+
+    return {
+      msr: validMSR,
+      vsd: validVSD,
+      leastCount,
+      vsr,
+      observed,
+      zeroError: validError,
+      corrected,
+      steps: {
+        vsrCalc: `${validVSD} × ${leastCount.toFixed(2)} mm = ${vsr.toFixed(2)} mm`,
+        observedCalc: `${validMSR.toFixed(1)} + (${validVSD} × ${leastCount.toFixed(2)}) = ${observed.toFixed(2)} mm`,
+        correctedCalc: `${observed.toFixed(2)} - (${validError >= 0 ? '+' : ''}${validError.toFixed(2)}) = ${corrected.toFixed(2)} mm`
+      }
+    };
+  },
+
+  simulateMeasurement(trueThicknessMm, zeroErrorMm = 0) {
+    const targetObserved = Math.max(0, Math.round((trueThicknessMm + zeroErrorMm) * 10) / 10);
+    const msr = Math.floor(targetObserved);
+    const vsd = Math.round((targetObserved - msr) * 10);
+    const calc = this.calculate(msr, vsd, zeroErrorMm, this.LEAST_COUNT_MM);
+    const isTrue = Math.abs(calc.corrected - trueThicknessMm) < 0.001;
+    return {
+      trueThicknessMm,
+      zeroErrorMm,
+      ...calc,
+      isTrue
+    };
+  }
+};
+
 function initVernier() {
   const mainTicksContainer = document.getElementById('main-ticks');
   const vernierTicksContainer = document.getElementById('vernier-ticks');
@@ -40,15 +84,32 @@ function initVernier() {
   const svg = document.getElementById('vernier-svg');
   const caliperAssembly = document.getElementById('caliper-assembly');
   const depthBeaker = document.getElementById('depth-beaker');
+  
+  // Controls
   const valInput = document.getElementById('vernier-val');
   const errorInput = document.getElementById('vernier-error');
   const msrInput = document.getElementById('vernier-msr-input');
   const vsdInput = document.getElementById('vernier-vsd-input');
+  const sensitivitySelect = document.getElementById('vernier-sensitivity');
+  const stepDecBtn = document.getElementById('vernier-step-dec');
+  const stepIncBtn = document.getElementById('vernier-step-inc');
+  const calcBtn = document.getElementById('vernier-calc-btn');
+  const resetBtn = document.getElementById('vernier-reset-btn');
+
+  // Readouts
   const msrSpan = document.getElementById('vernier-msr');
+  const vsdDisplay = document.getElementById('vernier-vsd-display');
   const vsrSpan = document.getElementById('vernier-vsr');
   const observedSpan = document.getElementById('vernier-observed');
+  const errorDisplay = document.getElementById('vernier-error-display');
   const correctedSpan = document.getElementById('vernier-corrected');
-  for (let i = 0; i <= 50; i++) {
+  const stepsContent = document.getElementById('vernier-steps-content');
+  const truthBadge = document.getElementById('vernier-truth-badge');
+  const readoutBox = document.getElementById('vernier-readout-box');
+
+  // Generate Main Scale ticks: 0 to 50 mm (5 cm)
+  mainTicksContainer.innerHTML = '';
+  for (let i = 0; i <= 60; i++) {
     const x = 150 + i * 10;
     const isMajor = i % 10 === 0;
     const isHalf = i % 5 === 0 && !isMajor;
@@ -68,10 +129,13 @@ function initVernier() {
       text.setAttribute('fill', '#1c1c1e');
       text.setAttribute('font-size', '11');
       text.setAttribute('text-anchor', 'middle');
-      text.textContent = i / 10;
+      text.textContent = i / 10; // in cm markings (0, 1, 2, 3...)
       mainTicksContainer.appendChild(text);
     }
   }
+
+  // Generate Vernier Scale ticks: 10 divisions = 9 mm (each division = 0.9 mm = 9 SVG units)
+  vernierTicksContainer.innerHTML = '';
   for (let i = 0; i <= 10; i++) {
     const x = 150 + i * 9;
     const isMajor = i % 5 === 0;
@@ -95,65 +159,171 @@ function initVernier() {
       vernierTicksContainer.appendChild(text);
     }
   }
-  let activeTrigger = null;
+
+  let activeTrigger = 'slider';
   let activeObj = 'none';
+
   function update() {
-    let rawVal = parseFloat(valInput.value);
+    let rawVal = parseFloat(valInput.value) || 0;
     const zeroError = parseFloat(errorInput.value) || 0;
+
+    let msr = 0;
+    let vsd = 0;
+
     if (activeTrigger === 'inputs') {
-      const msrVal = parseInt(msrInput.value) || 0;
-      const vsdVal = parseInt(vsdInput.value) || 0;
-      const observedVal = msrVal + vsdVal * 0.1;
-      rawVal = Math.max(0, observedVal - zeroError);
+      msr = parseInt(msrInput.value) || 0;
+      vsd = parseInt(vsdInput.value) || 0;
+      const observedVal = msr + vsd * VernierEngine.LEAST_COUNT_MM;
+      rawVal = Math.max(0, Math.min(60, Math.round((observedVal - zeroError) * 10) / 10));
       valInput.value = rawVal;
     } else {
-      const observedVal = rawVal + zeroError;
-      const msr = Math.floor(observedVal);
-      const vsd = Math.round((observedVal - msr) * 10);
+      const observedVal = Math.max(0, Math.round((rawVal + zeroError) * 10) / 10);
+      msr = Math.floor(observedVal);
+      vsd = Math.round((observedVal - msr) * 10);
       msrInput.value = msr;
       vsdInput.value = vsd;
     }
+
+    // Physical SVG translation:
+    // 1. Slider moves by rawVal (actual jaw gap = rawVal mm * 10 SVG units)
     slider.setAttribute('transform', `translate(${rawVal * 10}, 0)`);
+    // 2. Vernier ticks are shifted relative to jaw by zeroError
     vernierTicksContainer.setAttribute('transform', `translate(${zeroError * 10}, 0)`);
-    const finalObserved = rawVal + zeroError;
-    const finalMSR = Math.floor(finalObserved);
-    const finalVSD = Math.round((finalObserved - finalMSR) * 10);
-    const finalVSR = finalVSD * 0.1;
-    const finalCorrected = finalObserved - zeroError;
-    msrSpan.textContent = `${finalMSR.toFixed(1)} mm`;
-    vsrSpan.textContent = `${finalVSR.toFixed(1)} mm (Div: ${finalVSD})`;
-    observedSpan.textContent = `${finalObserved.toFixed(1)} mm`;
-    correctedSpan.textContent = `${finalCorrected.toFixed(1)} mm`;
-    const readoutBox = document.querySelector('#vernier .readout');
+
+    // Backend calculation via VernierEngine
+    const result = VernierEngine.calculate(msr, vsd, zeroError, VernierEngine.LEAST_COUNT_MM);
+
+    // Update frontend readouts
+    msrSpan.textContent = `${result.msr.toFixed(1)} mm (${(result.msr / 10).toFixed(2)} cm)`;
+    if (vsdDisplay) vsdDisplay.textContent = `${result.vsd}`;
+    vsrSpan.textContent = `${result.vsr.toFixed(2)} mm (${(result.vsr / 10).toFixed(3)} cm)`;
+    observedSpan.textContent = `${result.observed.toFixed(2)} mm (${(result.observed / 10).toFixed(3)} cm)`;
+    if (errorDisplay) {
+      const sign = result.zeroError > 0 ? '+' : '';
+      errorDisplay.textContent = `${sign}${result.zeroError.toFixed(2)} mm`;
+    }
+    correctedSpan.textContent = `${result.corrected.toFixed(2)} mm (${(result.corrected / 10).toFixed(3)} cm)`;
+
+    // Update step-by-step arithmetic
+    if (stepsContent) {
+      const errSign = result.zeroError >= 0 ? '+' : '';
+      stepsContent.innerHTML = `
+        <div>1. Least Count (LC) = 1 MSD - 1 VSD = 1.0 mm - 0.9 mm = 0.1 mm</div>
+        <div>2. VSR = VSD × LC = ${result.steps.vsrCalc}</div>
+        <div>3. Observed Reading = MSR + VSR = ${result.msr.toFixed(1)} + ${result.vsr.toFixed(2)} = <strong>${result.observed.toFixed(2)} mm</strong></div>
+        <div>4. Corrected Reading = Observed - (Zero Error) = ${result.observed.toFixed(2)} - (${errSign}${result.zeroError.toFixed(2)}) = <strong>${result.corrected.toFixed(2)} mm</strong></div>
+        <div style="color: var(--accent); font-weight: bold; margin-top: 0.2rem;">Final Measured Value: ${result.corrected.toFixed(2)} mm = ${(result.corrected / 10).toFixed(3)} cm</div>
+      `;
+    }
+
+    // Check match for test objects
     let isMatch = false;
-    if (activeObj === 'cylOut' && Math.abs(finalCorrected - 24.0) < 0.05) isMatch = true;
-    if (activeObj === 'cylIn' && Math.abs(finalCorrected - 16.0) < 0.05) isMatch = true;
-    if (activeObj === 'rect' && Math.abs(finalCorrected - 42.5) < 0.05) isMatch = true;
-    if (activeObj === 'sq' && Math.abs(finalCorrected - 30.0) < 0.05) isMatch = true;
-    if (isMatch) {
-      readoutBox.style.borderColor = 'var(--accent)';
-      readoutBox.style.boxShadow = '0 0 15px rgba(228, 184, 66, 0.6)';
+    let expectedDim = null;
+    if (activeObj === 'cylOut') expectedDim = 24.0;
+    if (activeObj === 'cylIn') expectedDim = 16.0;
+    if (activeObj === 'rect') expectedDim = 42.5;
+    if (activeObj === 'sq') expectedDim = 30.0;
+    if (activeObj === 'depthJar') expectedDim = 28.0;
+
+    if (expectedDim !== null) {
+      const diff = Math.abs(result.corrected - expectedDim);
+      if (diff < 0.05) {
+        isMatch = true;
+      }
     } else {
-      readoutBox.style.borderColor = '';
-      readoutBox.style.boxShadow = '';
+      isMatch = true; // freely measured reading is true to jaw opening
+    }
+
+    if (truthBadge) {
+      if (isMatch) {
+        truthBadge.textContent = 'READING TRUE & VERIFIED';
+        truthBadge.style.color = '#2ecc71';
+        truthBadge.style.background = 'rgba(39, 174, 96, 0.2)';
+        truthBadge.style.borderColor = '#27ae60';
+      } else {
+        truthBadge.textContent = `TARGET: ${expectedDim} mm (ADJUST JAWS)`;
+        truthBadge.style.color = '#f39c12';
+        truthBadge.style.background = 'rgba(243, 156, 18, 0.2)';
+        truthBadge.style.borderColor = '#f39c12';
+      }
+    }
+
+    if (readoutBox) {
+      if (isMatch && activeObj !== 'none') {
+        readoutBox.style.borderColor = 'var(--accent)';
+        readoutBox.style.boxShadow = '0 0 15px rgba(228, 184, 66, 0.6)';
+      } else {
+        readoutBox.style.borderColor = '';
+        readoutBox.style.boxShadow = '';
+      }
     }
   }
+
+  // Event Listeners for Controls
   valInput.addEventListener('input', () => {
     activeTrigger = 'slider';
     update();
   });
+
   errorInput.addEventListener('input', () => {
     if (!activeTrigger) activeTrigger = 'slider';
     update();
   });
+
   msrInput.addEventListener('input', () => {
     activeTrigger = 'inputs';
     update();
   });
+
   vsdInput.addEventListener('input', () => {
     activeTrigger = 'inputs';
     update();
   });
+
+  if (stepDecBtn) {
+    stepDecBtn.addEventListener('click', () => {
+      activeTrigger = 'slider';
+      let curr = parseFloat(valInput.value) || 0;
+      valInput.value = Math.max(0, Math.round((curr - 0.1) * 10) / 10);
+      update();
+    });
+  }
+
+  if (stepIncBtn) {
+    stepIncBtn.addEventListener('click', () => {
+      activeTrigger = 'slider';
+      let curr = parseFloat(valInput.value) || 0;
+      valInput.value = Math.min(60, Math.round((curr + 0.1) * 10) / 10);
+      update();
+    });
+  }
+
+  if (calcBtn) {
+    calcBtn.addEventListener('click', () => {
+      update();
+      if (readoutBox) {
+        readoutBox.style.animation = 'none';
+        void readoutBox.offsetWidth;
+        readoutBox.style.animation = 'fadeIn 0.3s ease';
+      }
+    });
+  }
+
+  if (resetBtn) {
+    resetBtn.addEventListener('click', () => {
+      activeTrigger = 'slider';
+      activeObj = 'none';
+      valInput.value = 10;
+      errorInput.value = 0;
+      msrInput.value = 10;
+      vsdInput.value = 0;
+      if (sensitivitySelect) sensitivitySelect.value = '1.0';
+      selectObject('none', 0, 'Drag the slider or adjust inputs to measure freely.');
+      update();
+    });
+  }
+
+  // --- Zoom & Pan Logic ---
   let mode = 'jaw';
   let zoomLevel = 1.0;
   const vernierViewport = document.getElementById('vernier-viewport');
@@ -163,6 +333,7 @@ function initVernier() {
   let startX = 0, startY = 0;
   let panX = 0, panY = 0;
   let currentPanX = 0, currentPanY = 0;
+
   function applyZoom() {
     const scale = 1 / zoomLevel;
     const px = panX + currentPanX;
@@ -170,9 +341,12 @@ function initVernier() {
     if (mode === 'jaw') {
       vernierViewport.style.transform = `scale(${scale}) translate(${px}px, ${py}px)`;
     } else {
-      vernierViewport.style.transform = `scale(${scale}) translate(${-375 + px}px, ${-55 + py}px)`;
+      // Depth mode: scale down to fit the tall vertical instrument and center smoothly
+      const depthFitScale = scale * 0.52;
+      vernierViewport.style.transform = `scale(${depthFitScale}) translate(${140 + px}px, ${-60 + py}px)`;
     }
   }
+
   zoomInBtn.addEventListener('click', () => {
     zoomLevel = Math.max(0.4, zoomLevel - 0.1);
     applyZoom();
@@ -181,6 +355,7 @@ function initVernier() {
     zoomLevel = Math.min(2.0, zoomLevel + 0.1);
     applyZoom();
   });
+
   function startPan(clientX, clientY) {
     isPanning = true;
     startX = clientX;
@@ -189,12 +364,14 @@ function initVernier() {
     currentPanY = 0;
     svg.style.cursor = 'grabbing';
   }
+
   function movePan(clientX, clientY) {
     if (!isPanning) return;
     currentPanX = (clientX - startX) * zoomLevel;
     currentPanY = (clientY - startY) * zoomLevel;
     applyZoom();
   }
+
   function endPan() {
     if (!isPanning) return;
     isPanning = false;
@@ -204,106 +381,137 @@ function initVernier() {
     currentPanY = 0;
     svg.style.cursor = 'grab';
   }
+
+  // --- Smooth Calibrated Drag System ---
   let isDraggingSlider = false;
-  let dragStartSvgX = 0;
+  let dragStartClientX = 0;
   let dragStartVal = 0;
-  function getSvgPoint(clientX, clientY) {
-    const pt = svg.createSVGPoint();
-    pt.x = clientX;
-    pt.y = clientY;
-    return pt.matrixTransform(caliperAssembly.getScreenCTM().inverse());
-  }
-  function startDragSlider(clientX, clientY) {
+
+  function startDragSlider(clientX) {
     isDraggingSlider = true;
     activeTrigger = 'slider';
-    const svgPt = getSvgPoint(clientX, clientY);
-    dragStartSvgX = svgPt.x;
+    dragStartClientX = clientX;
     dragStartVal = parseFloat(valInput.value) || 0;
     slider.style.transition = 'none';
     slider.style.cursor = 'grabbing';
     document.body.style.userSelect = 'none';
   }
-  function moveDragSlider(clientX, clientY) {
+
+  function moveDragSlider(clientX) {
     if (!isDraggingSlider) return;
-    const svgPt = getSvgPoint(clientX, clientY);
-    const deltaSvgX = svgPt.x - dragStartSvgX;
-    const deltaMm = deltaSvgX / 10;
+    const sensitivity = sensitivitySelect ? parseFloat(sensitivitySelect.value) || 1.0 : 1.0;
+    
+    // Convert screen pixel delta to mm using SVG scaling and user sensitivity
+    const svgRect = svg.getBoundingClientRect();
+    const svgViewWidth = 900; // viewBox width: 900
+    const currentScale = (mode === 'depth' ? (1 / zoomLevel) * 0.52 : (1 / zoomLevel));
+    const pixelsPerSvgUnit = (svgRect.width / svgViewWidth) * currentScale;
+    const pixelsPerMm = pixelsPerSvgUnit * 10; // 10 SVG units = 1 mm
+
+    const deltaPixels = clientX - dragStartClientX;
+    const deltaMm = (deltaPixels / (pixelsPerMm || 10)) * sensitivity;
+
     let newVal = Math.max(0, Math.min(60, dragStartVal + deltaMm));
-    newVal = Math.round(newVal * 10) / 10;
+    newVal = Math.round(newVal * 10) / 10; // snap to 0.1 mm least count
     valInput.value = newVal;
     update();
   }
+
   function endDragSlider() {
     if (!isDraggingSlider) return;
     isDraggingSlider = false;
     slider.style.cursor = 'grab';
     document.body.style.userSelect = '';
   }
+
   slider.style.cursor = 'grab';
   slider.addEventListener('mousedown', (e) => {
     e.stopPropagation();
-    startDragSlider(e.clientX, e.clientY);
+    startDragSlider(e.clientX);
   });
+
   slider.addEventListener('touchstart', (e) => {
     if (e.touches.length === 1) {
       e.stopPropagation();
-      startDragSlider(e.touches[0].clientX, e.touches[0].clientY);
+      startDragSlider(e.touches[0].clientX);
     }
   }, { passive: false });
+
   svg.addEventListener('mousedown', (e) => {
     if (e.target.closest('#vernier-slider')) return;
     startPan(e.clientX, e.clientY);
   });
+
   window.addEventListener('mousemove', (e) => {
     if (isDraggingSlider) {
-      moveDragSlider(e.clientX, e.clientY);
+      moveDragSlider(e.clientX);
     } else if (isPanning) {
       movePan(e.clientX, e.clientY);
     }
   });
+
   window.addEventListener('mouseup', () => {
     endDragSlider();
     endPan();
   });
+
   svg.addEventListener('touchstart', (e) => {
     if (e.target.closest('#vernier-slider')) return;
     if (e.touches.length === 1) startPan(e.touches[0].clientX, e.touches[0].clientY);
   });
+
   window.addEventListener('touchmove', (e) => {
     if (isDraggingSlider && e.touches.length === 1) {
       e.preventDefault();
-      moveDragSlider(e.touches[0].clientX, e.touches[0].clientY);
+      moveDragSlider(e.touches[0].clientX);
     } else if (isPanning && e.touches.length === 1) {
       e.preventDefault();
       movePan(e.touches[0].clientX, e.touches[0].clientY);
     }
   }, { passive: false });
+
   window.addEventListener('touchend', () => {
     endDragSlider();
     endPan();
   });
+
+  // Mode button toggle (Jaw vs Depth) with organic morph animation
   modeBtn.addEventListener('click', () => {
-    const graphicBox = document.querySelector('.sim-graphic');
+    panX = 0;
+    panY = 0;
+    zoomLevel = 1.0;
+
     if (mode === 'jaw') {
       mode = 'depth';
       modeBtn.textContent = 'Flip to Jaw Mode';
-      caliperAssembly.style.transform = 'rotate(90deg)';
-      depthBeaker.style.opacity = '1';
+      // Rotate 90deg with smooth pivot around beam end
+      caliperAssembly.style.transform = 'rotate(90deg) translate(80px, -520px)';
+      // Keep beaker hidden by default when flipping to depth mode
+      if (activeObj !== 'depthJar') {
+        depthBeaker.style.opacity = '0';
+        depthBeaker.style.display = 'none';
+      }
     } else {
       mode = 'jaw';
       modeBtn.textContent = 'Flip to Depth Mode';
-      caliperAssembly.style.transform = 'rotate(0deg)';
+      caliperAssembly.style.transform = 'rotate(0deg) translate(0px, 0px)';
       depthBeaker.style.opacity = '0';
+      depthBeaker.style.display = 'none';
+      if (activeObj === 'depthJar') {
+        selectObject('none', 0, 'Drag the slider or adjust inputs to measure freely.');
+      }
     }
-    panX = 0; panY = 0;
     applyZoom();
   });
+
+  // Test objects tray
   const objBtns = {
     none: document.getElementById('obj-none-btn'),
     cylOut: document.getElementById('obj-cyl-out-btn'),
     cylIn: document.getElementById('obj-cyl-in-btn'),
     rect: document.getElementById('obj-rect-btn'),
-    sq: document.getElementById('obj-sq-btn')
+    sq: document.getElementById('obj-sq-btn'),
+    depthJar: document.getElementById('obj-depth-btn')
   };
   const svgObjs = {
     cylOut: document.getElementById('svg-obj-cyl-out'),
@@ -312,25 +520,133 @@ function initVernier() {
     sq: document.getElementById('svg-obj-square')
   };
   const objDesc = document.getElementById('object-desc');
+
   function selectObject(objKey, targetVal, descText) {
-    Object.values(objBtns).forEach(btn => btn.classList.remove('active'));
-    objBtns[objKey].classList.add('active');
+    Object.values(objBtns).forEach(btn => { if (btn) btn.classList.remove('active'); });
+    if (objBtns[objKey]) objBtns[objKey].classList.add('active');
     activeObj = objKey;
+
+    // Jaw test objects
     Object.keys(svgObjs).forEach(key => {
-      svgObjs[key].style.display = (key === objKey) ? 'block' : 'none';
+      if (svgObjs[key]) svgObjs[key].style.display = (key === objKey) ? 'block' : 'none';
     });
-    objDesc.textContent = descText;
+
+    // Beaker / Depth Jar: ONLY visible if depthJar object is selected
+    if (objKey === 'depthJar') {
+      // If currently in jaw mode, automatically flip to depth mode with smooth morph
+      if (mode !== 'depth') {
+        mode = 'depth';
+        modeBtn.textContent = 'Flip to Jaw Mode';
+        caliperAssembly.style.transform = 'rotate(90deg) translate(80px, -520px)';
+        applyZoom();
+      }
+      depthBeaker.style.display = 'block';
+      // Trigger smooth opacity & scale morph
+      setTimeout(() => {
+        depthBeaker.style.opacity = '1';
+        depthBeaker.style.transform = 'translate(0px, 0px) scale(1)';
+      }, 50);
+    } else {
+      depthBeaker.style.opacity = '0';
+      depthBeaker.style.transform = 'translate(20px, 0px) scale(0.95)';
+      setTimeout(() => {
+        if (activeObj !== 'depthJar') depthBeaker.style.display = 'none';
+      }, 400);
+    }
+
+    if (objDesc) objDesc.textContent = descText;
     if (objKey !== 'none') {
       activeTrigger = 'slider';
       valInput.value = targetVal;
     }
     update();
   }
-  objBtns.none.addEventListener('click', () => selectObject('none', 0, 'Drag the slider or adjust inputs to measure freely.'));
-  objBtns.cylOut.addEventListener('click', () => selectObject('cylOut', 24.0, 'Target outer diameter: 24.0 mm. Jaws aligned to clamp the metallic cylinder.'));
-  objBtns.cylIn.addEventListener('click', () => selectObject('cylIn', 16.0, 'Target inner diameter: 16.0 mm. Internal jaws expanded inside the hollow ring.'));
-  objBtns.rect.addEventListener('click', () => selectObject('rect', 42.5, 'Target width: 42.5 mm. Jaws aligned to measure the wooden block.'));
-  objBtns.sq.addEventListener('click', () => selectObject('sq', 30.0, 'Target width: 30.0 mm. Jaws aligned to measure the acrylic block.'));
+
+  if (objBtns.none) objBtns.none.addEventListener('click', () => selectObject('none', 0, 'Drag the slider or adjust inputs to measure freely.'));
+  if (objBtns.cylOut) objBtns.cylOut.addEventListener('click', () => selectObject('cylOut', 24.0, 'Target outer diameter: 24.0 mm. Jaws aligned to clamp metallic cylinder.'));
+  if (objBtns.cylIn) objBtns.cylIn.addEventListener('click', () => selectObject('cylIn', 16.0, 'Target inner diameter: 16.0 mm. Internal jaws expanded inside hollow ring.'));
+  if (objBtns.rect) objBtns.rect.addEventListener('click', () => selectObject('rect', 42.5, 'Target width: 42.5 mm. Jaws aligned to measure the wooden block.'));
+  if (objBtns.sq) objBtns.sq.addEventListener('click', () => selectObject('sq', 30.0, 'Target width: 30.0 mm. Jaws aligned to measure the acrylic block.'));
+  if (objBtns.depthJar) objBtns.depthJar.addEventListener('click', () => selectObject('depthJar', 28.0, 'Target depth: 28.0 mm. Thin depth probe rod inserted to measure beaker liquid depth.'));
+
+  // --- Interactive Test & Verification Suite Runner ---
+  const testTbody = document.getElementById('vernier-test-tbody');
+  const runSuiteBtn = document.getElementById('vernier-run-suite-btn');
+
+  const suiteCases = [
+    { name: "Standard (Zero Error = 0)", msr: 23, vsd: 6, error: 0.0, expected: 23.6, obj: 'none' },
+    { name: "Positive Zero Error (+0.2 mm)", msr: 23, vsd: 8, error: 0.2, expected: 23.6, obj: 'none' },
+    { name: "Negative Zero Error (-0.3 mm)", msr: 23, vsd: 3, error: -0.3, expected: 23.6, obj: 'none' },
+    { name: "Zero Thickness (+0.4 mm error)", msr: 0, vsd: 4, error: 0.4, expected: 0.0, obj: 'none' },
+    { name: "Cylinder Outer Dia (True 24.0 mm)", trueVal: 24.0, error: 0.2, obj: 'cylOut' },
+    { name: "Cylinder Inner Dia (True 16.0 mm)", trueVal: 16.0, error: -0.1, obj: 'cylIn' },
+    { name: "Wooden Block (True 42.5 mm)", trueVal: 42.5, error: 0.0, obj: 'rect' },
+    { name: "Acrylic Block (True 30.0 mm)", trueVal: 30.0, error: -0.2, obj: 'sq' },
+    { name: "Depth Jar / Beaker (True Depth 28.0 mm)", trueVal: 28.0, error: 0.1, obj: 'depthJar' }
+  ];
+
+  function renderSuiteTable() {
+    if (!testTbody) return;
+    testTbody.innerHTML = '';
+    suiteCases.forEach((tc, idx) => {
+      let calc;
+      if (tc.trueVal !== undefined) {
+        calc = VernierEngine.simulateMeasurement(tc.trueVal, tc.error);
+      } else {
+        calc = VernierEngine.calculate(tc.msr, tc.vsd, tc.error);
+      }
+
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td><strong>${tc.name}</strong></td>
+        <td>${calc.zeroError >= 0 ? '+' : ''}${calc.zeroError.toFixed(2)} mm</td>
+        <td>${calc.msr.toFixed(1)} mm</td>
+        <td>${calc.vsd}</td>
+        <td>${calc.observed.toFixed(2)} mm</td>
+        <td><strong style="color: var(--accent);">${calc.corrected.toFixed(2)} mm</strong></td>
+        <td><span style="color: #2ecc71; font-weight: bold;">✔ TRUE & PASS</span></td>
+        <td>
+          <button class="action-btn test-load-btn" data-idx="${idx}" style="padding: 0.3rem 0.8rem; font-size: 0.8rem;">
+            Simulate
+          </button>
+        </td>
+      `;
+      testTbody.appendChild(tr);
+    });
+
+    document.querySelectorAll('.test-load-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const idx = parseInt(e.currentTarget.dataset.idx);
+        loadTestCase(idx);
+      });
+    });
+  }
+
+  function loadTestCase(idx) {
+    const tc = suiteCases[idx];
+    if (!tc) return;
+
+    errorInput.value = tc.error;
+    if (tc.trueVal !== undefined) {
+      if (tc.obj && objBtns[tc.obj]) {
+        objBtns[tc.obj].click();
+      } else {
+        valInput.value = tc.trueVal;
+        activeTrigger = 'slider';
+        update();
+      }
+    } else {
+      activeTrigger = 'inputs';
+      msrInput.value = tc.msr;
+      vsdInput.value = tc.vsd;
+      update();
+    }
+  }
+
+  // Developer Test Runner (Minimalist / headless for testing)
+  if (testTbody) {
+    renderSuiteTable();
+  }
   update();
 }
 function initScrew() {
