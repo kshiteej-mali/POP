@@ -1,5 +1,4 @@
 
-// --- Split-Flap Text Component (ReactBits Style Solari Board) ---
 class SplitFlapText {
   constructor(container, options = {}) {
     this.container = container;
@@ -89,7 +88,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Smooth Morphing Section Transitions
   function navigateToSection(targetId) {
     if (isNavigating) return;
     const currentActive = document.querySelector('.section.active');
