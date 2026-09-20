@@ -1,7 +1,6 @@
 const fs = require('fs');
 const path = require('path');
 
-// Read script.js and extract logic
 const scriptPath = path.join(__dirname, '..', 'script.js');
 const scriptContent = fs.readFileSync(scriptPath, 'utf8');
 
@@ -10,8 +9,6 @@ if (!scriptContent.includes('const VernierEngine = {')) {
   process.exit(1);
 }
 
-// Evaluate VernierEngine directly
-// Minimal DOM mock so script.js can load in Node environment
 global.document = {
   addEventListener: () => {},
   querySelectorAll: () => [],

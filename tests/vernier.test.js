@@ -1,17 +1,6 @@
-/**
- * Vernier Caliper Metrology Engine & Verification Test Suite
- * Based on standard physics metrology principles and SLA requirements.
- */
-
 const VernierEngine = {
-  LEAST_COUNT_MM: 0.1, // 1 MSD (1 mm) - 1 VSD (0.9 mm) = 0.1 mm
+  LEAST_COUNT_MM: 0.1,
 
-  /**
-   * Pure calculation from MSR, VSD, and Zero Error
-   * Formula:
-   * Observed = MSR + (VSD * LC)
-   * Corrected = Observed - ZeroError
-   */
   calculate(msr, vsd, zeroError = 0, leastCount = 0.1) {
     const validMSR = Math.max(0, Math.floor(Number(msr) || 0));
     const validVSD = Math.max(0, Math.min(10, Math.round(Number(vsd) || 0)));
@@ -29,7 +18,6 @@ const VernierEngine = {
       observed,
       zeroError: validError,
       corrected,
-      // Educational breakdown text
       steps: {
         vsrCalc: `${validVSD} × ${leastCount.toFixed(2)} mm = ${vsr.toFixed(2)} mm`,
         observedCalc: `${validMSR.toFixed(1)} + (${validVSD} × ${leastCount.toFixed(2)}) = ${observed.toFixed(2)} mm`,
@@ -38,21 +26,12 @@ const VernierEngine = {
     };
   },
 
-  /**
-   * Simulate placing an object of known true thickness L in the caliper
-   * with an instrument zero error e.
-   * Observed scale reading = L + e
-   * MSR = floor(Observed)
-   * VSD = round((Observed - MSR) / LC)
-   * Corrected = Observed - e = L (True reading recovered!)
-   */
   simulateMeasurement(trueThicknessMm, zeroErrorMm = 0) {
     const targetObserved = Math.max(0, Math.round((trueThicknessMm + zeroErrorMm) * 10) / 10);
     const msr = Math.floor(targetObserved);
     const vsd = Math.round((targetObserved - msr) * 10);
     const calc = this.calculate(msr, vsd, zeroErrorMm, this.LEAST_COUNT_MM);
     
-    // Check if recovered corrected reading equals true thickness
     const isTrue = Math.abs(calc.corrected - trueThicknessMm) < 0.001;
     return {
       trueThicknessMm,
@@ -63,7 +42,6 @@ const VernierEngine = {
   }
 };
 
-// Benchmark Test Cases for Vernier Caliper
 const testCases = [
   {
     name: "Standard Measurement (Zero Error = 0)",
