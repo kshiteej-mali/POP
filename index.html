@@ -15,7 +15,6 @@
 </head>
 
 <body>
-  <!-- Full Bleed Ambient Beams Canvas -->
   <div class="beams-canvas-container">
     <canvas id="beams-canvas"></canvas>
   </div>
@@ -208,25 +207,19 @@
               </defs>
               <g id="vernier-viewport">
 
-                <!-- Depth Beaker: Aligned directly under the vertical depth probe in Depth Mode -->
                 <g id="depth-beaker" style="display: none; opacity: 0;">
-                  <!-- Beaker glass liquid fill -->
                   <rect x="408" y="475" width="64" height="235" fill="#2364aa" fill-opacity="0.35" rx="3" />
-                  <!-- Beaker glass outline with top lip -->
                   <path d="M 395 470 L 406 475 L 406 712 Q 406 720 414 720 L 466 720 Q 474 720 474 712 L 474 475 L 485 470"
                     fill="none" stroke="#fec601" stroke-width="3" stroke-linecap="round" />
-                  <!-- Measurement graduation marks -->
                   <line x1="406" y1="520" x2="422" y2="520" stroke="#fec601" stroke-width="1.5" />
                   <line x1="406" y1="570" x2="418" y2="570" stroke="#fec601" stroke-width="1.5" />
                   <line x1="406" y1="620" x2="422" y2="620" stroke="#fec601" stroke-width="1.5" />
                   <line x1="406" y1="670" x2="418" y2="670" stroke="#fec601" stroke-width="1.5" />
-                  <!-- Liquid meniscus level -->
                   <line x1="408" y1="520" x2="472" y2="520" stroke="#73bfb8" stroke-width="2" stroke-dasharray="3,2" />
                 </g>
 
                 <g id="caliper-assembly">
 
-                  <!-- Jaw Test Objects: Clamped between the jaws (rotates with caliper) -->
                   <g id="svg-test-objects">
                     <rect id="svg-obj-cyl-out" x="100" y="100" width="240" height="120" fill="url(#metal-grad)"
                       stroke="#585966" stroke-width="1.5" rx="8" style="display: none;" />
@@ -409,7 +402,6 @@
         </div>
       </div>
 
-      <!-- Educational & Formula Cards in Authentic Mathematical Typography -->
       <div class="iks-grid" style="margin-top: 2rem;">
         <div class="iks-item math-panel">
           <h3 style="color: var(--accent); font-family: 'Cinzel', serif; margin-bottom: 1.2rem; border-bottom: 1px solid var(--panel-border); padding-bottom: 0.5rem;">Vernier Caliper Mathematical Formulation</h3>
