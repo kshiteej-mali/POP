@@ -678,7 +678,6 @@ function initVernier() {
   if (objBtns.sq) objBtns.sq.addEventListener('click', () => selectObject('sq', 30.0, 'Target width: 30.0 mm. Jaws aligned to measure the acrylic block.'));
   if (objBtns.depthJar) objBtns.depthJar.addEventListener('click', () => selectObject('depthJar', 28.0, 'Target depth: 28.0 mm. Thin depth probe rod inserted to measure beaker liquid depth.'));
 
-  // --- Interactive Test & Verification Suite Runner ---
   const testTbody = document.getElementById('vernier-test-tbody');
   const runSuiteBtn = document.getElementById('vernier-run-suite-btn');
 
@@ -752,7 +751,6 @@ function initVernier() {
     }
   }
 
-  // Developer Test Runner (Minimalist / headless for testing)
   if (testTbody) {
     renderSuiteTable();
   }
@@ -1209,10 +1207,10 @@ function initBeamsBackground() {
       float t = uTime * 0.35;
       float beamField = 0.0;
       
-      vec3 beamColor1 = vec3(0.137, 0.392, 0.667); // #2364AA Ocean Deep
-      vec3 beamColor2 = vec3(0.239, 0.647, 0.851); // #3DA5D9 Fresh Sky
-      vec3 beamColor3 = vec3(0.451, 0.749, 0.722); // #73BFB8 Tropical Teal
-      vec3 beamColor4 = vec3(0.996, 0.776, 0.004); // #FEC601 School Bus Yellow
+      vec3 beamColor1 = vec3(0.137, 0.392, 0.667);
+      vec3 beamColor2 = vec3(0.239, 0.647, 0.851);
+      vec3 beamColor3 = vec3(0.451, 0.749, 0.722);
+      vec3 beamColor4 = vec3(0.996, 0.776, 0.004);
       
       for (float i = 0.0; i < 12.0; i += 1.0) {
         float xOffset = (i - 5.5) * 0.28;
