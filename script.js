@@ -370,7 +370,6 @@ function initVernier() {
     }
   }
 
-  // Event Listeners for Controls
   valInput.addEventListener('input', () => {
     activeTrigger = 'slider';
     update();
@@ -434,7 +433,6 @@ function initVernier() {
     });
   }
 
-  // --- Zoom & Pan Logic ---
   let mode = 'jaw';
   let zoomLevel = 1.0;
   const vernierViewport = document.getElementById('vernier-viewport');
@@ -452,7 +450,6 @@ function initVernier() {
     if (mode === 'jaw') {
       vernierViewport.style.transform = `scale(${scale}) translate(${px}px, ${py}px)`;
     } else {
-      // Depth mode: scale down smoothly to fit vertical caliper & beaker, centered at (400, 120)
       const depthFitScale = scale * 0.48;
       vernierViewport.style.transform = `scale(${depthFitScale}) translate(${px}px, ${-90 + py}px)`;
     }
@@ -493,7 +490,6 @@ function initVernier() {
     svg.style.cursor = 'grab';
   }
 
-  // --- Smooth Calibrated Drag System ---
   let isDraggingSlider = false;
   let dragStartClientX = 0;
   let dragStartVal = 0;
@@ -512,18 +508,17 @@ function initVernier() {
     if (!isDraggingSlider) return;
     const sensitivity = sensitivitySelect ? parseFloat(sensitivitySelect.value) || 1.0 : 1.0;
     
-    // Convert screen pixel delta to mm using SVG scaling and user sensitivity
     const svgRect = svg.getBoundingClientRect();
-    const svgViewWidth = 900; // viewBox width: 900
+    const svgViewWidth = 900;
     const currentScale = (mode === 'depth' ? (1 / zoomLevel) * 0.48 : (1 / zoomLevel));
     const pixelsPerSvgUnit = (svgRect.width / svgViewWidth) * currentScale;
-    const pixelsPerMm = pixelsPerSvgUnit * 10; // 10 SVG units = 1 mm
+    const pixelsPerMm = pixelsPerSvgUnit * 10;
 
     const deltaPixels = clientX - dragStartClientX;
     const deltaMm = (deltaPixels / (pixelsPerMm || 10)) * sensitivity;
 
     let newVal = Math.max(0, Math.min(60, dragStartVal + deltaMm));
-    newVal = Math.round(newVal * 10) / 10; // snap to 0.1 mm least count
+    newVal = Math.round(newVal * 10) / 10;
     valInput.value = newVal;
     update();
   }
@@ -586,7 +581,6 @@ function initVernier() {
     endPan();
   });
 
-  // Mode controller with pure in-place rotation
   function setMode(newMode) {
     if (mode === newMode) return;
     mode = newMode;
@@ -596,7 +590,6 @@ function initVernier() {
 
     if (mode === 'depth') {
       modeBtn.textContent = 'Flip to Jaw Mode';
-      // Rotate 90deg strictly in-place around center (400, 120)
       caliperAssembly.style.transform = 'rotate(90deg)';
       if (activeObj !== 'depthJar') {
         depthBeaker.style.opacity = '0';
@@ -611,7 +604,6 @@ function initVernier() {
     applyZoom();
   }
 
-  // Mode button toggle (Jaw vs Depth)
   modeBtn.addEventListener('click', () => {
     if (mode === 'jaw') {
       setMode('depth');
@@ -626,7 +618,6 @@ function initVernier() {
     }
   });
 
-  // Test objects tray
   const objBtns = {
     none: document.getElementById('obj-none-btn'),
     cylOut: document.getElementById('obj-cyl-out-btn'),
@@ -649,7 +640,6 @@ function initVernier() {
     activeObj = objKey;
 
     if (objKey === 'depthJar') {
-      // Depth Jar is measured in Depth Mode!
       if (mode !== 'depth') {
         setMode('depth');
       }
@@ -657,7 +647,6 @@ function initVernier() {
       setTimeout(() => {
         depthBeaker.style.opacity = '1';
       }, 50);
-      // Hide jaw objects
       Object.keys(svgObjs).forEach(k => { if (svgObjs[k]) svgObjs[k].style.display = 'none'; });
     } else {
       depthBeaker.style.opacity = '0';
@@ -665,12 +654,10 @@ function initVernier() {
         if (activeObj !== 'depthJar') depthBeaker.style.display = 'none';
       }, 300);
 
-      // Jaw objects are measured in Jaw Mode!
       if (objKey !== 'none' && mode === 'depth') {
         setMode('jaw');
       }
 
-      // Show selected jaw object (clamped between jaws)
       Object.keys(svgObjs).forEach(key => {
         if (svgObjs[key]) svgObjs[key].style.display = (key === objKey) ? 'block' : 'none';
       });
