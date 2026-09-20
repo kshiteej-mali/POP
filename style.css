@@ -1,11 +1,4 @@
 :root {
-  /* Coolors Palette:
-     1. #2364AA (Ocean Deep)
-     2. #3DA5D9 (Fresh Sky)
-     3. #73BFB8 (Tropical Teal)
-     4. #FEC601 (Warm Sun Yellow)
-     5. #EA7317 (Pumpkin Spice Orange)
-  */
   --bg: #07131e;
   --panel-bg: #0c2033;
   --panel-border: #1a4267;
@@ -559,7 +552,6 @@ table.iks-table th {
   line-height: 1.4;
 }
 
-/* --- Vernier Controls & Enhancements --- */
 .cal-btn-mini:hover {
   background: var(--primary) !important;
   color: var(--text-main) !important;
@@ -572,7 +564,6 @@ table.iks-table th {
   letter-spacing: 0.5px;
 }
 
-/* --- Split-Flap Text Component (ReactBits Solari Departure Board) --- */
 .split-flap-board {
   display: inline-flex;
   gap: 2.5px;
@@ -694,7 +685,6 @@ table.iks-table th {
   pointer-events: none;
 }
 
-/* --- Mathematical Typography & KaTeX Enhancement --- */
 .katex-display {
   margin: 0.3em 0 !important;
   text-align: center;
