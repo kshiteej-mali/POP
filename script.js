@@ -156,9 +156,8 @@ document.addEventListener('DOMContentLoaded', () => {
   setTimeout(triggerMathRender, 300);
   setTimeout(triggerMathRender, 800);
 });
-// --- Vernier Caliper Metrology & Simulation Backend Engine ---
 const VernierEngine = {
-  LEAST_COUNT_MM: 0.1, // 1 MSD (1 mm) - 1 VSD (0.9 mm) = 0.1 mm
+  LEAST_COUNT_MM: 0.1,
 
   calculate(msr, vsd, zeroError = 0, leastCount = 0.1) {
     const validMSR = Math.max(0, Math.floor(Number(msr) || 0));
@@ -210,7 +209,6 @@ function initVernier() {
   const caliperAssembly = document.getElementById('caliper-assembly');
   const depthBeaker = document.getElementById('depth-beaker');
   
-  // Controls
   const valInput = document.getElementById('vernier-val');
   const errorInput = document.getElementById('vernier-error');
   const msrInput = document.getElementById('vernier-msr-input');
@@ -221,7 +219,6 @@ function initVernier() {
   const calcBtn = document.getElementById('vernier-calc-btn');
   const resetBtn = document.getElementById('vernier-reset-btn');
 
-  // Readouts
   const msrSpan = document.getElementById('vernier-msr');
   const vsdDisplay = document.getElementById('vernier-vsd-display');
   const vsrSpan = document.getElementById('vernier-vsr');
@@ -234,7 +231,6 @@ function initVernier() {
   const vernierFlapEl = document.getElementById('vernier-corrected-flap');
   const vernierFlap = vernierFlapEl ? new SplitFlapText(vernierFlapEl) : null;
 
-  // Generate Main Scale ticks: 0 to 50 mm (5 cm)
   mainTicksContainer.innerHTML = '';
   for (let i = 0; i <= 60; i++) {
     const x = 150 + i * 10;
@@ -256,12 +252,11 @@ function initVernier() {
       text.setAttribute('fill', '#1c1c1e');
       text.setAttribute('font-size', '11');
       text.setAttribute('text-anchor', 'middle');
-      text.textContent = i / 10; // in cm markings (0, 1, 2, 3...)
+      text.textContent = i / 10;
       mainTicksContainer.appendChild(text);
     }
   }
 
-  // Generate Vernier Scale ticks: 10 divisions = 9 mm (each division = 0.9 mm = 9 SVG units)
   vernierTicksContainer.innerHTML = '';
   for (let i = 0; i <= 10; i++) {
     const x = 150 + i * 9;
@@ -311,20 +306,14 @@ function initVernier() {
       vsdInput.value = vsd;
     }
 
-    // Physical SVG translation:
-    // The entire slider assembly (sliding jaw, depth blade, vernier plate, and vernier ticks)
-    // moves as one rigid physical unit along the main scale.
-    // Slider position reflects the observed scale reading (rawVal + zeroError).
     const sliderPosMm = (activeTrigger === 'inputs')
       ? (msr + vsd * VernierEngine.LEAST_COUNT_MM)
       : (rawVal + zeroError);
     slider.setAttribute('transform', `translate(${sliderPosMm * 10}, 0)`);
     vernierTicksContainer.removeAttribute('transform');
 
-    // Backend calculation via VernierEngine
     const result = VernierEngine.calculate(msr, vsd, zeroError, VernierEngine.LEAST_COUNT_MM);
 
-    // Update frontend readouts in minimalist format
     msrSpan.textContent = `${result.msr.toFixed(1)} mm`;
     if (vsdDisplay) vsdDisplay.textContent = `${result.vsd}`;
     vsrSpan.textContent = `${result.vsr.toFixed(2)} mm`;
@@ -335,12 +324,10 @@ function initVernier() {
     }
     correctedSpan.textContent = `${result.corrected.toFixed(2)} mm`;
 
-    // Split-Flap animated output
     if (vernierFlap) {
       vernierFlap.setText(`${result.corrected.toFixed(1)} mm`);
     }
 
-    // Check match for test objects
     let isMatch = false;
     let expectedDim = null;
     if (activeObj === 'cylOut') expectedDim = 24.0;
@@ -355,7 +342,7 @@ function initVernier() {
         isMatch = true;
       }
     } else {
-      isMatch = true; // freely measured reading is true to jaw opening
+      isMatch = true;
     }
 
     if (truthBadge) {
