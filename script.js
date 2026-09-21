@@ -1469,16 +1469,26 @@ function initSpherometer() {
     if (!hInput) return;
     const surface = surfaceSelect ? surfaceSelect.value : 'convex';
     const legDistance = Math.max(10, parseFloat(aInput ? aInput.value : 50) || 50);
-    const hRaw = Math.max(0, Math.min(10, parseFloat(hInput.value) || 0));
+    const hRaw = Math.max(-10, Math.min(10, parseFloat(hInput.value) || 0));
     const zeroError = parseFloat(errorInput ? errorInput.value : 0) || 0;
 
     const pitch = 1.0;
     const divs = 100;
     const lc = SpherometerEngine.calculateLeastCount(pitch, divs);
 
-    const visualH = Math.max(0, hRaw + zeroError);
-    const msr = Math.floor(visualH / pitch) * pitch;
-    const csrDiv = Math.round(((visualH - msr) / lc)) % divs;
+    // Visual reading including zero error
+    const visualH = Math.max(-10, Math.min(10, hRaw + zeroError));
+    
+    // MSR: signed integer part towards 0 or conventional floor
+    let msr = Math.trunc(visualH);
+    let rem = visualH - msr;
+    let csrDiv = Math.round(Math.abs(rem) / lc) % divs;
+    if (visualH < 0 && csrDiv > 0) {
+      // On negative side of spherometer vertical pitch scale:
+      // e.g. -2.30 mm: MSR is -2 or -3 with CSR reading upwards/downwards
+      // For textbook linear scales with 0 at center: MSR is signed -2, CSR is fraction
+      csrDiv = Math.round(Math.abs(rem) / lc) % divs;
+    }
 
     if (source !== 'inputs' && !isInternalUpdate && msrInput && csrInput) {
       isInternalUpdate = true;
@@ -1487,24 +1497,35 @@ function initSpherometer() {
       isInternalUpdate = false;
     }
 
-    // Pure metrological calculation
+    // Pure metrological calculation using SpherometerEngine
     const calc = SpherometerEngine.calculate(msr, csrDiv, zeroError, pitch, divs, legDistance);
+
+    // Sync calculated corrected height with signed direction
+    if (visualH < 0 && calc.correctedH > 0) {
+      calc.correctedH = -calc.correctedH;
+      calc.observedH = -Math.abs(calc.observedH);
+    }
 
     // Update surface SVG curve
     let baseD = "M 180 275 L 620 275";
-    let curveHeight = Math.min(calc.correctedH * 5, 45);
+    const hMagnitude = Math.abs(calc.correctedH);
+    let curveHeight = Math.min(hMagnitude * 5, 50);
 
     if (surface === "convex") {
+      // Convex curvature arches UPWARDS towards the center
       baseD = `M 180 275 Q 400 ${275 - curveHeight} 620 275`;
       if (surfaceLabel) {
         surfaceLabel.textContent = calc.correctedH === 0
-          ? "Surface: Flat Glass Plate (Reference h = 0)"
-          : `Surface: Convex Lens / Spherical Mirror (Sagitta h = ${calc.correctedH.toFixed(2)} mm)`;
+          ? "Surface: Flat Glass Plate (Reference h = 0.00 mm)"
+          : `Surface: Convex Lens / Spherical Mirror (Outward Sagitta h = +${hMagnitude.toFixed(2)} mm)`;
       }
     } else if (surface === "concave") {
+      // Concave curvature dips DOWNWARDS (inward depression)
       baseD = `M 180 275 Q 400 ${275 + curveHeight} 620 275`;
       if (surfaceLabel) {
-        surfaceLabel.textContent = `Surface: Concave Mirror / Lens (Depth h = ${calc.correctedH.toFixed(2)} mm)`;
+        surfaceLabel.textContent = calc.correctedH === 0
+          ? "Surface: Flat Glass Plate (Reference h = 0.00 mm)"
+          : `Surface: Concave Mirror / Inward Cavity (Inward Depth h = -${hMagnitude.toFixed(2)} mm)`;
       }
     } else {
       if (surfaceLabel) surfaceLabel.textContent = "Surface: Flat Glass Plate (Reference h = 0.00 mm)";
@@ -1513,7 +1534,7 @@ function initSpherometer() {
     if (base) base.setAttribute('d', baseD);
 
     // Central screw moves vertically along with disc and knob
-    // Travel: 5 px per mm (so 10 mm travel = 50 px from y=95 to y=45 on ruler)
+    // Travel: 5 px per mm (elevation > 0 moves UP / yOffset negative; depression < 0 moves DOWN / yOffset positive)
     const travelPx = visualH * 5;
     const yOffset = -travelPx;
     if (screw) {
@@ -1525,21 +1546,27 @@ function initSpherometer() {
 
     // Update Readouts
     if (lcDisplay) lcDisplay.textContent = `${lc.toFixed(2)} mm`;
-    if (msrDisplay) msrDisplay.textContent = `${calc.msr.toFixed(1)} mm`;
+    const msrSign = calc.msr > 0 ? '+' : '';
+    if (msrDisplay) msrDisplay.textContent = `${msrSign}${calc.msr.toFixed(1)} mm`;
     if (csrDisplay) csrDisplay.textContent = `${calc.csrMm.toFixed(2)} mm (Div: ${calc.csr})`;
-    if (observedDisplay) observedDisplay.textContent = `${calc.observedH.toFixed(2)} mm`;
+    const obsSign = calc.observedH > 0 ? '+' : '';
+    if (observedDisplay) observedDisplay.textContent = `${obsSign}${calc.observedH.toFixed(2)} mm`;
     if (errorDisplay) errorDisplay.textContent = `${zeroError >= 0 ? '+' : ''}${zeroError.toFixed(2)} mm`;
-    if (hValSpan) hValSpan.textContent = `${calc.correctedH.toFixed(2)} mm`;
+    
+    const corrSign = calc.correctedH > 0 ? '+' : '';
+    const formattedH = `${corrSign}${calc.correctedH.toFixed(2)} mm`;
+    if (hValSpan) hValSpan.textContent = formattedH;
 
     if (sphFlap) {
-      sphFlap.setText(`${calc.correctedH.toFixed(2)} mm`);
+      sphFlap.setText(formattedH);
     }
 
     if (rSpan) {
       if (calc.radiusOfCurvature === Infinity) {
         rSpan.textContent = "∞ (Flat Surface)";
       } else {
-        rSpan.textContent = `${calc.radiusOfCurvature.toFixed(2)} mm`;
+        const curvatureType = calc.correctedH < 0 ? " (Concave)" : " (Convex)";
+        rSpan.textContent = `${calc.radiusOfCurvature.toFixed(2)} mm${curvatureType}`;
       }
     }
 
@@ -1556,7 +1583,7 @@ function initSpherometer() {
 
     // Truth Badge
     if (truthBadge) {
-      const isTruth = Math.abs(calc.correctedH - hRaw) < 0.015;
+      const isTruth = Math.abs(Math.abs(calc.correctedH) - Math.abs(hRaw)) < 0.015;
       if (isTruth) {
         truthBadge.textContent = 'READING TRUE';
         truthBadge.style.background = 'rgba(39, 174, 96, 0.2)';
@@ -1582,13 +1609,14 @@ function initSpherometer() {
   // Direct inputs
   function onDirectInputsChange() {
     if (isInternalUpdate) return;
-    const msr = Math.max(0, parseFloat(msrInput.value) || 0);
+    const msr = parseFloat(msrInput.value) || 0;
     const csr = Math.max(0, parseInt(csrInput.value, 10) || 0);
     const zeroError = parseFloat(errorInput ? errorInput.value : 0) || 0;
     const lc = 0.01;
 
-    const observed = msr + csr * lc;
-    const targetH = Math.max(0, Math.min(10, observed - zeroError));
+    const sign = msr < 0 ? -1 : 1;
+    const observed = msr >= 0 ? (msr + csr * lc) : (msr - csr * lc);
+    const targetH = Math.max(-10, Math.min(10, observed - zeroError));
     hInput.value = targetH.toFixed(2);
     update('inputs');
   }
@@ -1596,13 +1624,19 @@ function initSpherometer() {
   if (msrInput) msrInput.addEventListener('input', onDirectInputsChange);
   if (csrInput) csrInput.addEventListener('input', onDirectInputsChange);
 
-  // Surface change
+  // Surface change: Convex (h > 0), Concave (h < 0), Flat (h = 0)
   if (surfaceSelect) {
     surfaceSelect.addEventListener('change', () => {
       if (surfaceSelect.value === 'flat') {
         hInput.value = '0.00';
-      } else if (hInput.value === '0.00' || hInput.value === '0') {
-        hInput.value = '2.50';
+      } else if (surfaceSelect.value === 'concave') {
+        // Switch to inward/depression mode (negative h)
+        let cur = parseFloat(hInput.value) || 0;
+        hInput.value = cur > 0 ? (-cur).toFixed(2) : (cur === 0 ? '-2.50' : cur.toFixed(2));
+      } else if (surfaceSelect.value === 'convex') {
+        // Switch to outward/elevation mode (positive h)
+        let cur = parseFloat(hInput.value) || 0;
+        hInput.value = cur < 0 ? Math.abs(cur).toFixed(2) : (cur === 0 ? '2.50' : cur.toFixed(2));
       }
       update('h');
     });
@@ -1612,12 +1646,22 @@ function initSpherometer() {
   if (hInput) hInput.addEventListener('input', () => update('h'));
   if (errorInput) errorInput.addEventListener('input', () => update('h'));
 
-  // Step buttons
+  // Step buttons (-10 to +10 mm range)
   function applyStep(delta) {
     if (!hInput) return;
     let cur = parseFloat(hInput.value) || 0;
-    cur = Math.max(0, Math.min(10, Math.round((cur + delta) * 100) / 100));
+    cur = Math.max(-10, Math.min(10, Math.round((cur + delta) * 100) / 100));
     hInput.value = cur.toFixed(2);
+    // Auto-update surface selector if crossing 0
+    if (surfaceSelect) {
+      if (cur < 0 && surfaceSelect.value !== 'concave') {
+        surfaceSelect.value = 'concave';
+      } else if (cur > 0 && surfaceSelect.value !== 'convex') {
+        surfaceSelect.value = 'convex';
+      } else if (cur === 0 && surfaceSelect.value !== 'flat') {
+        surfaceSelect.value = 'flat';
+      }
+    }
     update('h');
   }
 
