@@ -1844,18 +1844,17 @@ function initBeamsBackground() {
     return;
   }
 
-  // Configuration corresponding to React Bits Beams component:
-  // beamWidth: 2, beamHeight: 15, beamNumber: 12, lightColor: '#ffffff', speed: 2, noiseIntensity: 1.75, scale: 0.2, rotation: 0
+  // Configuration for smooth, minimalist, visible and seamless aesthetic:
   const config = {
-    beamWidth: 2.2,
-    beamHeight: 16,
-    beamNumber: 14,
-    lightColor: '#ffffff',
-    beamColor: '#000000',
-    backgroundColor: '#07131e',
-    speed: 1.8,
-    noiseIntensity: 1.75,
-    scale: 0.22,
+    beamWidth: 3.4,
+    beamHeight: 30,
+    beamNumber: 16,
+    lightColor: '#5fc1f0',       // Vibrant celestial blue
+    beamColor: '#123352',        // Visible rich navy blue matching theme
+    backgroundColor: '#07131e',  // Main background matching --bg
+    speed: 1.6,
+    noiseIntensity: 1.2,         // Distinct, elegant undulating waves
+    scale: 0.2,
     rotation: 0,
     lightMode: false
   };
@@ -2010,8 +2009,9 @@ float cnoise(vec3 P){
 
     for (let i = 0; i < n; i++) {
       const xOffset = xOffsetBase + i * (width + spacing);
-      const uvXOffset = Math.random() * 300;
-      const uvYOffset = Math.random() * 300;
+      // Smooth continuous UV offset so neighboring strips form a coherent wave
+      const uvXOffset = (i / n) * 3.0;
+      const uvYOffset = (i / n) * 2.0;
 
       for (let j = 0; j <= heightSegments; j++) {
         const y = height * (j / heightSegments - 0.5);
@@ -2054,32 +2054,32 @@ uniform float uNoiseIntensity;
 uniform float uScale;
 ${noiseShader}`,
     vertexHeader: `
-float getPos(vec3 pos) {
-  vec3 noisePos = vec3(pos.x * 0., pos.y - uv.y, pos.z + time * uSpeed * 3.) * uScale;
-  return cnoise(noisePos);
+float getPos(vec3 pos, vec2 uvCoord) {
+  vec3 noisePos = vec3(pos.x * 0.1, pos.y - uvCoord.y, pos.z + time * uSpeed * 3.) * uScale;
+  return cnoise(noisePos) * (uNoiseIntensity / 1.75);
 }
-vec3 getCurrentPos(vec3 pos) {
+vec3 getCurrentPos(vec3 pos, vec2 uvCoord) {
   vec3 newpos = pos;
-  newpos.z += getPos(pos);
+  newpos.z += getPos(pos, uvCoord);
   return newpos;
 }
-vec3 getNormal(vec3 pos) {
-  vec3 curpos = getCurrentPos(pos);
-  vec3 nextposX = getCurrentPos(pos + vec3(0.01, 0.0, 0.0));
-  vec3 nextposZ = getCurrentPos(pos + vec3(0.0, -0.01, 0.0));
+vec3 getNormal(vec3 pos, vec2 uvCoord) {
+  vec3 curpos = getCurrentPos(pos, uvCoord);
+  vec3 nextposX = getCurrentPos(pos + vec3(0.01, 0.0, 0.0), uvCoord);
+  vec3 nextposZ = getCurrentPos(pos + vec3(0.0, -0.01, 0.0), uvCoord);
   vec3 tangentX = normalize(nextposX - curpos);
   vec3 tangentZ = normalize(nextposZ - curpos);
   return normalize(cross(tangentZ, tangentX));
 }`,
     fragmentHeader: 'uniform float uLightMode;',
     vertex: {
-      '#include <begin_vertex>': `transformed.z += getPos(transformed.xyz);`,
-      '#include <beginnormal_vertex>': `objectNormal = getNormal(position.xyz);`
+      '#include <begin_vertex>': `transformed.z += getPos(transformed.xyz, uv);`,
+      '#include <beginnormal_vertex>': `objectNormal = getNormal(position.xyz, uv);`
     },
     fragment: {
       '#include <dithering_fragment>': `
 float randomNoise = noise(gl_FragCoord.xy);
-gl_FragColor.rgb -= randomNoise / 15. * uNoiseIntensity;
+gl_FragColor.rgb -= randomNoise / 18. * uNoiseIntensity;
 if (uLightMode > 0.5) {
   float energy = max(max(gl_FragColor.r, gl_FragColor.g), gl_FragColor.b);
   vec3 chroma = clamp(gl_FragColor.rgb / max(energy, 0.0001), 0.0, 1.0);
@@ -2091,10 +2091,10 @@ if (uLightMode > 0.5) {
     uniforms: {
       diffuse: new THREE.Color(...hexToNormalizedRGB(config.beamColor)),
       time: { shared: true, mixed: true, linked: true, value: 0 },
-      roughness: 0.3,
-      metalness: 0.3,
+      roughness: 0.38,             // Crisp silk-satin sheen
+      metalness: 0.22,             // Subtle metallic luster
       uSpeed: { shared: true, mixed: true, linked: true, value: config.speed },
-      envMapIntensity: 10,
+      envMapIntensity: 6,
       uNoiseIntensity: config.noiseIntensity,
       uScale: config.scale,
       uLightMode: config.lightMode ? 1 : 0
@@ -2104,17 +2104,24 @@ if (uLightMode > 0.5) {
   const group = new THREE.Group();
   group.rotation.z = THREE.MathUtils.degToRad(config.rotation);
 
-  const geometry = createStackedPlanesBufferGeometry(config.beamNumber, config.beamWidth, config.beamHeight, 0, 100);
+  // Negative spacing gives an overlap of 0.45 so no slits appear between ribbons
+  const geometry = createStackedPlanesBufferGeometry(config.beamNumber, config.beamWidth, config.beamHeight, -0.45, 100);
   const mesh = new THREE.Mesh(geometry, beamMaterial);
   group.add(mesh);
 
-  const dirLight = new THREE.DirectionalLight(config.lightColor, 1.2);
-  dirLight.position.set(0, 3, 10);
+  const dirLight = new THREE.DirectionalLight(config.lightColor, 1.6);
+  dirLight.position.set(-5, 4, 10);
   group.add(dirLight);
+
+  // Subtle warm gold rim light matching --accent (#fed338)
+  const accentLight = new THREE.DirectionalLight('#fed338', 0.85);
+  accentLight.position.set(6, -3, 8);
+  group.add(accentLight);
 
   scene.add(group);
 
-  const ambientLight = new THREE.AmbientLight(0xffffff, 1.1);
+  // Deep blue ambient light to illuminate the planes with contrast
+  const ambientLight = new THREE.AmbientLight('#1a4267', 1.4);
   scene.add(ambientLight);
 
   function resize() {
@@ -2126,6 +2133,15 @@ if (uLightMode > 0.5) {
     camera.updateProjectionMatrix();
 
     renderer.setSize(width, height, false);
+
+    // Ensure the beams group spans full visible width and height of camera
+    const vFOV = THREE.MathUtils.degToRad(camera.fov);
+    const visibleHeight = 2 * Math.tan(vFOV / 2) * camera.position.z;
+    const visibleWidth = visibleHeight * camera.aspect;
+    const totalBeamGeoWidth = config.beamNumber * config.beamWidth + (config.beamNumber - 1) * -0.45;
+    const scaleX = Math.max(1.0, (visibleWidth * 1.25) / totalBeamGeoWidth);
+    const scaleY = Math.max(1.0, (visibleHeight * 1.25) / config.beamHeight);
+    group.scale.set(scaleX, scaleY, 1);
   }
 
   window.addEventListener('resize', resize);
@@ -2139,7 +2155,7 @@ if (uLightMode > 0.5) {
     lastTime = now;
 
     if (beamMaterial.uniforms && beamMaterial.uniforms.time) {
-      beamMaterial.uniforms.time.value += 0.1 * delta;
+      beamMaterial.uniforms.time.value += 1.0 * delta;
     }
 
     renderer.render(scene, camera);
@@ -2537,18 +2553,19 @@ function createStrokeText(container, options = {}) {
   const characters = Array.from(String(text ?? ''));
   const dash = Math.max(fontSize * 7, 200);
 
+  // Use center-anchored text so it is always perfectly balanced and centered
   container.innerHTML = `
-    <span class="stroke-text" role="img" aria-label="${text.replace(/"/g, '&quot;')}" style="--stroke-text-height: ${Math.round(fontSize * 1.35)}px">
-      <svg class="stroke-text__svg" viewBox="0 ${-fontSize} 800 ${fontSize * 1.4}" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+    <span class="stroke-text" role="img" aria-label="${text.replace(/"/g, '&quot;')}" style="--stroke-text-height: ${Math.round(fontSize * 1.4)}px">
+      <svg class="stroke-text__svg" viewBox="-450 ${-fontSize} 900 ${fontSize * 1.5}" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
         <defs>
           <clipPath id="${wipeId}" clipPathUnits="userSpaceOnUse">
-            <rect class="wipe-rect" x="0" y="${-fontSize}" width="0" height="${fontSize * 2}" />
+            <rect class="wipe-rect" x="-450" y="${-fontSize}" width="0" height="${fontSize * 2}" />
           </clipPath>
         </defs>
-        <text class="stroke-text__stroke" x="0" y="0" fill="none" stroke="${strokeColor}" stroke-width="${strokeWidth}" stroke-linejoin="round" stroke-linecap="round" style="font-size: ${fontSize}px; font-weight: ${fontWeight}; letter-spacing: ${letterSpacing}px;">
+        <text class="stroke-text__stroke" x="0" y="0" text-anchor="middle" fill="none" stroke="${strokeColor}" stroke-width="${strokeWidth}" stroke-linejoin="round" stroke-linecap="round" style="font-size: ${fontSize}px; font-weight: ${fontWeight}; letter-spacing: ${letterSpacing}px;">
           ${characters.map(ch => `<tspan data-stroke-char>${ch === ' ' ? '&#160;' : ch}</tspan>`).join('')}
         </text>
-        <text class="stroke-text__fill" x="0" y="0" fill="${fillColor}" stroke="none" style="font-size: ${fontSize}px; font-weight: ${fontWeight}; letter-spacing: ${letterSpacing}px;" clip-path="${fillMode === 'wipe' ? `url(#${wipeId})` : 'none'}">
+        <text class="stroke-text__fill" x="0" y="0" text-anchor="middle" fill="${fillColor}" stroke="none" style="font-size: ${fontSize}px; font-weight: ${fontWeight}; letter-spacing: ${letterSpacing}px;" clip-path="${fillMode === 'wipe' ? `url(#${wipeId})` : 'none'}">
           ${characters.map(ch => `<tspan data-fill-char>${ch === ' ' ? '&#160;' : ch}</tspan>`).join('')}
         </text>
       </svg>
@@ -2561,54 +2578,19 @@ function createStrokeText(container, options = {}) {
   const strokes = Array.from(container.querySelectorAll('[data-stroke-char]'));
   const fills = Array.from(container.querySelectorAll('[data-fill-char]'));
 
-  // Calculate bounding box and calibrate viewBox
-  let box = { x: 0, y: -fontSize * 0.9, width: 600, height: fontSize * 1.3 };
-  try {
-    if (strokeTextElem && typeof strokeTextElem.getBBox === 'function') {
-      const bbox = strokeTextElem.getBBox();
-      if (bbox && bbox.width > 0) {
-        const pad = Math.max(Number(strokeWidth) || 1, fontSize * 0.1);
-        box = {
-          x: bbox.x - pad,
-          y: bbox.y - pad,
-          width: bbox.width + pad * 2,
-          height: bbox.height + pad * 2
-        };
-        svg.setAttribute('viewBox', `${box.x} ${box.y} ${box.width} ${box.height}`);
-        if (wipeRect) {
-          wipeRect.setAttribute('x', box.x);
-          wipeRect.setAttribute('y', box.y);
-          wipeRect.setAttribute('height', box.height);
-        }
-      }
-    }
-  } catch (e) {}
+  let box = { x: -450, y: -fontSize * 0.9, width: 900, height: fontSize * 1.4 };
 
-  let timeline = null;
-
-  const play = () => {
-    if (typeof gsap === 'undefined') {
-      // Fallback if GSAP is unavailable
-      container.querySelectorAll('[data-stroke-char]').forEach(s => {
-        s.style.strokeDashoffset = '0';
-      });
-      container.querySelectorAll('[data-fill-char]').forEach(f => {
-        f.style.opacity = '1';
-      });
-      if (onComplete) onComplete();
-      return;
-    }
-
-    // Remeasure if browser rendered fonts now
+  const calibrateViewBox = () => {
     try {
       if (strokeTextElem && typeof strokeTextElem.getBBox === 'function') {
         const bbox = strokeTextElem.getBBox();
         if (bbox && bbox.width > 0) {
-          const pad = Math.max(Number(strokeWidth) || 1, fontSize * 0.1);
+          const pad = Math.max(Number(strokeWidth) || 2, fontSize * 0.12);
+          const halfW = (bbox.width / 2) + pad;
           box = {
-            x: bbox.x - pad,
+            x: -halfW,
             y: bbox.y - pad,
-            width: bbox.width + pad * 2,
+            width: halfW * 2,
             height: bbox.height + pad * 2
           };
           svg.setAttribute('viewBox', `${box.x} ${box.y} ${box.width} ${box.height}`);
@@ -2620,6 +2602,25 @@ function createStrokeText(container, options = {}) {
         }
       }
     } catch (e) {}
+  };
+
+  calibrateViewBox();
+
+  let timeline = null;
+
+  const play = () => {
+    if (typeof gsap === 'undefined') {
+      container.querySelectorAll('[data-stroke-char]').forEach(s => {
+        s.style.strokeDashoffset = '0';
+      });
+      container.querySelectorAll('[data-fill-char]').forEach(f => {
+        f.style.opacity = '1';
+      });
+      if (onComplete) onComplete();
+      return;
+    }
+
+    calibrateViewBox();
 
     const fillEnabled = fillMode !== 'none';
     const useWipe = fillEnabled && fillMode === 'wipe';
@@ -2689,7 +2690,6 @@ const instrumentIntros = {
     fillColor: '#f0f7fd',
     containerId: 'vernier-stroke-container',
     overlayId: 'vernier-intro-overlay',
-    skipBtnId: 'vernier-intro-skip',
     played: false,
     controller: null
   },
@@ -2699,7 +2699,6 @@ const instrumentIntros = {
     fillColor: '#f0f7fd',
     containerId: 'screw-stroke-container',
     overlayId: 'screw-intro-overlay',
-    skipBtnId: 'screw-intro-skip',
     played: false,
     controller: null
   },
@@ -2709,7 +2708,6 @@ const instrumentIntros = {
     fillColor: '#f0f7fd',
     containerId: 'spherometer-stroke-container',
     overlayId: 'spherometer-intro-overlay',
-    skipBtnId: 'spherometer-intro-skip',
     played: false,
     controller: null
   }
@@ -2722,6 +2720,9 @@ function dismissInstrumentIntro(key) {
   if (overlay) {
     overlay.classList.add('hidden');
   }
+  // Resume scrolling once the intro animation completes
+  document.body.classList.remove('intro-active');
+  window.scrollTo({ top: 0, behavior: 'instant' });
 }
 
 function playInstrumentIntro(key) {
@@ -2731,10 +2732,14 @@ function playInstrumentIntro(key) {
   const overlay = document.getElementById(config.overlayId);
   if (!overlay) return;
 
+  // Scroll to top and lock scrolling so nothing moves during intro animation
+  window.scrollTo({ top: 0, behavior: 'instant' });
+  document.body.classList.add('intro-active');
+
   updateHeaderHeight();
   overlay.classList.remove('hidden');
 
-  // Slight delay to ensure section display and layout have stabilized
+  // Slight delay to ensure layout has stabilized
   setTimeout(() => {
     updateHeaderHeight();
     if (config.controller) {
@@ -2757,15 +2762,15 @@ function playInstrumentIntro(key) {
       fontWeight: 700,
       letterSpacing: 3,
       onComplete: () => {
-        // Pause briefly so user appreciates the filled title, then reveal the simulator
+        // Pause briefly so user appreciates the filled title, then reveal the simulator and resume scrolling
         setTimeout(() => {
           dismissInstrumentIntro(key);
-        }, 600);
+        }, 550);
       }
     });
 
     config.controller.play();
-  }, 120);
+  }, 100);
 }
 
 function updateHeaderHeight() {

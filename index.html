@@ -17,6 +17,9 @@
 </head>
 
 <body>
+  <div class="beams-canvas-container">
+    <canvas id="beams-canvas"></canvas>
+  </div>
   <header>
     <div class="logo" style="font-family: 'Cinzel', serif;">POP <span class="caret">/</span> Precision of Physics</div>
     <div class="header-nav-container">
@@ -35,9 +38,6 @@
 
   <main>
     <section id="home" class="section active">
-      <div class="beams-canvas-container">
-        <canvas id="beams-canvas"></canvas>
-      </div>
       <div class="home-hero full-home-hero">
         <div class="particle-text-wrapper" id="home-particle-wrapper">
           <div id="pop-particle-text" class="particle-text" aria-label="Precision of Physics (POP)">
@@ -50,19 +50,15 @@
         <div class="card-grid">
           <div class="card-nav" data-target="vernier">
             <h3>Vernier Caliper</h3>
-            <p>High-precision 2D jaws &amp; depth simulator with tray and zoom controls.</p>
           </div>
           <div class="card-nav" data-target="screw">
             <h3>Screw Gauge</h3>
-            <p>Functional micrometer simulation with circular scales.</p>
           </div>
           <div class="card-nav" data-target="spherometer">
             <h3>Spherometer</h3>
-            <p>Calculates surface curvature profiles dynamically.</p>
           </div>
           <div class="card-nav" data-target="iks">
             <h3>IKS Metrology</h3>
-            <p>Explore Vedic measurement units and definitions.</p>
           </div>
         </div>
       </div>
@@ -191,12 +187,6 @@
     </section>
 
     <section id="vernier" class="section">
-      <div class="simulator-intro-overlay" id="vernier-intro-overlay">
-        <div class="intro-text-container">
-          <span class="intro-badge">Physical Metrology Suite</span>
-          <div id="vernier-stroke-container" style="width: 100%; max-width: 960px;"></div>
-        </div>
-      </div>
       <div class="grid-container">
         <div class="simulator-box" id="vernier-sim-box">
           <h2 style="font-family: 'Cinzel', serif; margin-bottom: 1.5rem;">Vernier Caliper Simulator</h2>
@@ -478,12 +468,6 @@
       </div>
     </section>
     <section id="screw" class="section">
-      <div class="simulator-intro-overlay" id="screw-intro-overlay">
-        <div class="intro-text-container">
-          <span class="intro-badge">Physical Metrology Suite</span>
-          <div id="screw-stroke-container" style="width: 100%; max-width: 960px;"></div>
-        </div>
-      </div>
       <div class="grid-container">
         <div class="simulator-box" id="screw-sim-box">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
@@ -909,12 +893,6 @@
     </section>
 
     <section id="spherometer" class="section">
-      <div class="simulator-intro-overlay" id="spherometer-intro-overlay">
-        <div class="intro-text-container">
-          <span class="intro-badge">Physical Metrology Suite</span>
-          <div id="spherometer-stroke-container" style="width: 100%; max-width: 960px;"></div>
-        </div>
-      </div>
       <div class="grid-container">
         <div class="simulator-box" id="spherometer-sim-box">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
@@ -1328,6 +1306,29 @@
       </div>
     </section>
   </main>
+
+  <!-- Full-viewport Instrument Intro Overlays (top-level fixed overlays) -->
+  <div class="simulator-intro-overlay hidden" id="vernier-intro-overlay">
+    <div class="intro-text-container">
+      <span class="intro-badge">Physical Metrology Suite</span>
+      <div id="vernier-stroke-container" class="intro-stroke-container"></div>
+    </div>
+  </div>
+
+  <div class="simulator-intro-overlay hidden" id="screw-intro-overlay">
+    <div class="intro-text-container">
+      <span class="intro-badge">Physical Metrology Suite</span>
+      <div id="screw-stroke-container" class="intro-stroke-container"></div>
+    </div>
+  </div>
+
+  <div class="simulator-intro-overlay hidden" id="spherometer-intro-overlay">
+    <div class="intro-text-container">
+      <span class="intro-badge">Physical Metrology Suite</span>
+      <div id="spherometer-stroke-container" class="intro-stroke-container"></div>
+    </div>
+  </div>
+
   <script src="script.js"></script>
 </body>
 

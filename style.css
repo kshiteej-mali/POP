@@ -47,7 +47,7 @@ body {
 header {
   position: sticky;
   top: 0;
-  z-index: 100;
+  z-index: 10000;
   border-bottom: 1px solid var(--panel-border);
   padding: 1rem 2.5rem;
   display: flex;
@@ -55,7 +55,9 @@ header {
   align-items: center;
   width: 100%;
   margin: 0 auto;
-  background: #07131e;
+  background: rgba(7, 19, 30, 0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 
 .logo {
@@ -482,11 +484,11 @@ table.iks-table th {
 }
 
 .beams-canvas-container {
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
+  width: 100vw;
+  height: 100vh;
   z-index: 0;
   pointer-events: none;
   overflow: hidden;
@@ -597,33 +599,38 @@ table.iks-table th {
 }
 
 .card-nav {
-  background: #0b1c2e;
+  background: rgba(11, 28, 46, 0.75);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   border: 1px solid var(--panel-border);
-  padding: 1.5rem;
+  padding: 1.25rem 1.5rem;
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  text-align: left;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .card-nav:hover {
-  border-color: var(--teal);
-  background: #0f273f;
-  transform: translateY(-5px);
-  box-shadow: 0 10px 25px rgba(61, 165, 217, 0.25);
+  border-color: var(--secondary-hover);
+  background: rgba(15, 39, 63, 0.9);
+  transform: translateY(-4px);
+  box-shadow: 0 10px 25px rgba(61, 165, 217, 0.3);
 }
 
 .card-nav h3 {
   font-family: 'Cinzel', serif;
   color: var(--teal);
-  margin-bottom: 0.5rem;
-  font-size: 1.1rem;
+  margin-bottom: 0;
+  font-size: 1.15rem;
+  letter-spacing: 1px;
+  transition: color 0.3s ease;
 }
 
-.card-nav p {
-  font-size: 0.9rem;
-  color: var(--text-muted);
-  line-height: 1.4;
+.card-nav:hover h3 {
+  color: var(--text-main);
 }
 
 .cal-btn-mini:hover {
@@ -808,18 +815,19 @@ table.iks-table th {
   left: 0;
   width: 100vw;
   height: calc(100vh - var(--header-actual-height, 67px));
-  background: #07131e;
-  z-index: 95;
+  background: #07131e !important;
+  z-index: 9999;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 2.5rem;
+  padding: 2rem;
   box-sizing: border-box;
   opacity: 1;
   transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.5s;
   pointer-events: auto;
   border-radius: 0 !important;
+  overflow: hidden;
 }
 
 .simulator-intro-overlay.hidden {
@@ -830,11 +838,22 @@ table.iks-table th {
 
 .intro-text-container {
   width: 100%;
-  max-width: 950px;
+  max-width: 1000px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  text-align: center;
+  margin: 0 auto;
+}
+
+.intro-stroke-container {
+  width: 100%;
+  max-width: 960px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
 }
 
 .intro-badge {
@@ -847,25 +866,11 @@ table.iks-table th {
   border: 1px solid var(--panel-border);
   padding: 0.4rem 1.1rem;
   margin-bottom: 2rem;
-  background: rgba(12, 32, 51, 0.6);
+  background: rgba(12, 32, 51, 0.9);
 }
 
-.intro-skip-btn {
-  margin-top: 2.2rem;
-  background: transparent;
-  border: 1px solid var(--panel-border);
-  color: var(--text-muted);
-  padding: 0.55rem 1.5rem;
-  font-size: 0.85rem;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.intro-skip-btn:hover {
-  color: var(--accent);
-  border-color: var(--accent);
-  background: rgba(254, 198, 1, 0.08);
+body.intro-active {
+  overflow: hidden !important;
+  touch-action: none !important;
 }
 
