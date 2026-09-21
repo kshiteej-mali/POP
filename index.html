@@ -4,14 +4,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Physics SLA: Metrology & Indian Knowledge System</title>
+  <title>Precision of Physics (POP) - High-Precision Metrology Suite</title>
   <link
-    href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Outfit:wght@300;400;500;700&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Outfit:wght@300;400;500;700;800&display=swap"
     rel="stylesheet">
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 </head>
 
 <body>
@@ -19,7 +20,7 @@
     <canvas id="beams-canvas"></canvas>
   </div>
   <header>
-    <div class="logo" style="font-family: 'Cinzel', serif;">GROUP <span class="caret">^</span>6</div>
+    <div class="logo" style="font-family: 'Cinzel', serif;">POP <span class="caret">/</span> Precision of Physics</div>
     <div class="header-nav-container">
       <nav class="instruments-nav">
         <button class="nav-btn active" data-target="home">Home</button>
@@ -36,13 +37,19 @@
 
   <main>
     <section id="home" class="section active">
-      <div class="home-hero">
-        <h1 class="hero-title">GROUP <span class="hero-caret">^</span> 6</h1>
-        <p class="hero-subtitle">Physics SLA Sem-1 Metrology Suite</p>
+      <div class="home-hero full-home-hero">
+        <div class="particle-text-wrapper" id="home-particle-wrapper">
+          <div id="pop-particle-text" class="particle-text" aria-label="Precision of Physics (POP)">
+            <canvas id="pop-particle-canvas" class="particle-text__canvas" aria-hidden="true"></canvas>
+            <span class="particle-text__sr">Precision of Physics (POP)</span>
+          </div>
+        </div>
+        <h1 class="hero-title" style="display: none;">Precision of Physics (POP)</h1>
+        <p class="hero-subtitle">High-Precision Physical Metrology &amp; Historical Science Suite</p>
         <div class="card-grid">
           <div class="card-nav" data-target="vernier">
             <h3>Vernier Caliper</h3>
-            <p>High-precision 2D jaws & depth simulator with tray and zoom controls.</p>
+            <p>High-precision 2D jaws &amp; depth simulator with tray and zoom controls.</p>
           </div>
           <div class="card-nav" data-target="screw">
             <h3>Screw Gauge</h3>
@@ -66,8 +73,8 @@
           the Project & Team</h2>
         <p
           style="text-align: center; margin-bottom: 2.5rem; color: var(--text-muted); font-size: 1.1rem; line-height: 1.6;">
-          This Metrology Simulator & Indian Knowledge System suite was developed as a Physics SLA Project for Sem-1.
-          It combines high-precision mechanical instrument simulations with ancient Indian metrological history.
+          <strong>Precision of Physics (POP)</strong> is a comprehensive physical metrology and scientific simulation suite.
+          It integrates high-precision mechanical instrument simulations with rigorous formulations and ancient Indian metrological history.
         </p>
 
         <div class="iks-grid" style="grid-template-columns: 1fr; gap: 1.5rem;">
@@ -180,9 +187,16 @@
       </div>
     </section>
 
-    <section id="vernier" class="section active">
+    <section id="vernier" class="section">
+      <div class="simulator-intro-overlay" id="vernier-intro-overlay">
+        <div class="intro-text-container">
+          <span class="intro-badge">Physical Metrology Suite</span>
+          <div id="vernier-stroke-container" style="width: 100%; max-width: 960px;"></div>
+          <button class="intro-skip-btn" id="vernier-intro-skip">Skip Intro &rarr;</button>
+        </div>
+      </div>
       <div class="grid-container">
-        <div class="simulator-box">
+        <div class="simulator-box" id="vernier-sim-box">
           <h2 style="font-family: 'Cinzel', serif; margin-bottom: 1.5rem;">Vernier Caliper Simulator</h2>
           <div class="sim-graphic">
             <div class="zoom-controls">
@@ -334,19 +348,9 @@
             </div>
           </div>
 
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem;">
-            <div class="form-group">
-              <label for="vernier-error">Zero Error (mm)</label>
-              <input type="number" id="vernier-error" min="-2" max="2" step="0.1" value="0">
-            </div>
-            <div class="form-group">
-              <label for="vernier-sensitivity">Drag Sensitivity</label>
-              <select id="vernier-sensitivity" style="padding: 0.65rem 0.5rem;">
-                <option value="0.5">Smooth / Low</option>
-                <option value="1.0" selected>Balanced (1x)</option>
-                <option value="2.0">Fast / High</option>
-              </select>
-            </div>
+          <div class="form-group">
+            <label for="vernier-error">Zero Error (mm)</label>
+            <input type="number" id="vernier-error" min="-2" max="2" step="0.1" value="0">
           </div>
 
           <div style="display: flex; gap: 0.8rem; margin: 1rem 0;">
@@ -450,8 +454,15 @@
       </div>
     </section>
     <section id="screw" class="section">
+      <div class="simulator-intro-overlay" id="screw-intro-overlay">
+        <div class="intro-text-container">
+          <span class="intro-badge">Physical Metrology Suite</span>
+          <div id="screw-stroke-container" style="width: 100%; max-width: 960px;"></div>
+          <button class="intro-skip-btn" id="screw-intro-skip">Skip Intro &rarr;</button>
+        </div>
+      </div>
       <div class="grid-container">
-        <div class="simulator-box">
+        <div class="simulator-box" id="screw-sim-box">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
             <h2 style="font-family: 'Cinzel', serif; margin: 0;">Screw Gauge Simulator</h2>
             <div style="display: flex; gap: 0.8rem; align-items: center;">
@@ -477,23 +488,28 @@
                   <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#00875a" />
                 </marker>
                 <linearGradient id="frame-grad" x1="0%" y1="0%" x2="0%" y2="100%">
-                  <stop offset="0%" stop-color="#9aa4af" />
-                  <stop offset="25%" stop-color="#cfd8dc" />
-                  <stop offset="50%" stop-color="#78909c" />
-                  <stop offset="85%" stop-color="#455a64" />
-                  <stop offset="100%" stop-color="#263238" />
+                  <stop offset="0%" stop-color="#2a3f55" />
+                  <stop offset="25%" stop-color="#1c2d3e" />
+                  <stop offset="70%" stop-color="#14212e" />
+                  <stop offset="100%" stop-color="#0e1720" />
                 </linearGradient>
                 <linearGradient id="metal-linear" x1="0%" y1="0%" x2="0%" y2="100%">
-                  <stop offset="0%" stop-color="#e0e0e0" />
-                  <stop offset="30%" stop-color="#ffffff" />
-                  <stop offset="60%" stop-color="#bdc3c7" />
-                  <stop offset="100%" stop-color="#7f8c8d" />
+                  <stop offset="0%" stop-color="#e4ecf3" />
+                  <stop offset="35%" stop-color="#ffffff" />
+                  <stop offset="70%" stop-color="#cbd5e1" />
+                  <stop offset="100%" stop-color="#94a3b8" />
+                </linearGradient>
+                <linearGradient id="sleeve-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stop-color="#f8fafc" />
+                  <stop offset="40%" stop-color="#ffffff" />
+                  <stop offset="75%" stop-color="#e2e8f0" />
+                  <stop offset="100%" stop-color="#cbd5e1" />
                 </linearGradient>
                 <linearGradient id="thimble-grad" x1="0%" y1="0%" x2="0%" y2="100%">
-                  <stop offset="0%" stop-color="#b0bec5" />
-                  <stop offset="25%" stop-color="#eceff1" />
-                  <stop offset="60%" stop-color="#90a4ae" />
-                  <stop offset="100%" stop-color="#546e7a" />
+                  <stop offset="0%" stop-color="#e2e8f0" />
+                  <stop offset="30%" stop-color="#ffffff" />
+                  <stop offset="70%" stop-color="#cbd5e1" />
+                  <stop offset="100%" stop-color="#94a3b8" />
                 </linearGradient>
                 <radialGradient id="sphere-3d" cx="35%" cy="35%" r="65%">
                   <stop offset="0%" stop-color="#ff7675" />
@@ -502,27 +518,47 @@
                 </radialGradient>
               </defs>
 
-              <!-- U-shaped Steel Frame -->
+              <!-- Realistic Rectangular Curved Cast Frame -->
               <g id="screw-frame">
-                <path d="M 70 85 
-                         C 35 125, 35 200, 70 240 
-                         C 115 285, 230 285, 285 240 
-                         C 320 200, 320 125, 285 85
-                         L 245 85
-                         C 270 120, 270 185, 240 215
-                         C 200 245, 120 245, 80 215
-                         C 50 185, 50 120, 75 85
-                         Z" 
-                      fill="url(#frame-grad)" stroke="#1a252f" stroke-width="2.5" />
-                <rect x="120" y="240" width="80" height="24" rx="3" fill="#1c2d3d" stroke="#2c3e50" stroke-width="1.2" />
-                <text x="160" y="256" fill="#fec601" font-size="11" font-weight="700" font-family="'Cinzel', serif" text-anchor="middle" letter-spacing="1px">0 - 15 mm</text>
+                <!-- Smooth, perfectly connected rectangular U-Frame with generous corner radii -->
+                <path d="M 68 116
+                         L 100 116
+                         L 100 185
+                         C 100 235, 145 270, 205 270
+                         C 265 270, 310 235, 310 185
+                         L 310 116
+                         L 342 116
+                         L 342 185
+                         C 342 258, 280 298, 205 298
+                         C 130 298, 68 258, 68 185
+                         Z"
+                      fill="url(#frame-grad)" stroke="#0c1722" stroke-width="2" stroke-linejoin="round" />
+
+                <!-- Left Anvil Support Boss (Smoothly enclosing the anvil stem) -->
+                <path d="M 60 124 
+                         L 100 124 
+                         L 100 176 
+                         L 60 176 
+                         C 56 176, 52 172, 52 168 
+                         L 52 132 
+                         C 52 128, 56 124, 60 124 Z" 
+                      fill="url(#frame-grad)" stroke="#0c1722" stroke-width="2" />
+
+                <!-- Right Barrel Support Hub (Smoothly mating to the sleeve) -->
+                <rect x="310" y="118" width="34" height="64" rx="4" fill="url(#frame-grad)" stroke="#0c1722" stroke-width="2" />
+
+                <!-- Frame Inset Plate & Range Label -->
+                <rect x="155" y="274" width="100" height="18" rx="3" fill="#081018" stroke="#1c2d3e" stroke-width="1.2" />
+                <text x="205" y="287" fill="#fec601" font-size="10.5" font-weight="700" font-family="'Cinzel', serif" text-anchor="middle" letter-spacing="1px">0 - 15 mm</text>
               </g>
 
-              <!-- Left Anvil (Fixed) -->
+              <!-- Left Anvil (Fixed Carbide Measuring Face) -->
               <g id="anvil">
-                <rect x="70" y="133" width="60" height="34" rx="2" fill="url(#metal-linear)" stroke="#2c3e50" stroke-width="1.2" />
-                <rect x="120" y="131" width="10" height="38" rx="1" fill="#bdc3c7" stroke="#34495e" stroke-width="1.2" />
-                <line x1="130" y1="126" x2="130" y2="174" stroke="#7f8c8d" stroke-width="1.5" />
+                <!-- Cylindrical Anvil Body seamlessly emerging from boss -->
+                <rect x="74" y="134" width="46" height="32" rx="2" fill="url(#metal-linear)" stroke="#334155" stroke-width="1.2" />
+                <!-- Hardened Carbide Anvil Tip (Face exactly at x=130) -->
+                <rect x="120" y="132" width="10" height="36" rx="1.5" fill="#94a3b8" stroke="#1e293b" stroke-width="1.2" />
+                <line x1="130" y1="126" x2="130" y2="174" stroke="#64748b" stroke-width="1.2" />
               </g>
 
               <!-- Measured Object (Red Test Sphere) -->
@@ -530,47 +566,51 @@
                 <circle id="screw-object" cx="130" cy="150" r="0" fill="url(#sphere-3d)" stroke="#921b1b" stroke-width="1" />
               </g>
 
-              <!-- Spindle (Movable left-right rod) -->
+              <!-- Spindle (Movable left-right rod with Carbide Tip) -->
               <g id="spindle">
-                <rect x="130" y="133" width="260" height="34" rx="1" fill="url(#metal-linear)" stroke="#2c3e50" stroke-width="1.2" />
-                <line x1="130" y1="133" x2="130" y2="167" stroke="#2c3e50" stroke-width="1.8" />
+                <!-- Precision Ground Steel Spindle -->
+                <rect x="130" y="134" width="260" height="32" rx="1" fill="url(#metal-linear)" stroke="#334155" stroke-width="1.2" />
+                <!-- Hardened Carbide Spindle Tip at x=130 -->
+                <rect x="130" y="132" width="8" height="36" rx="1.5" fill="#94a3b8" stroke="#1e293b" stroke-width="1.2" />
+                <line x1="130" y1="132" x2="130" y2="168" stroke="#1e293b" stroke-width="1.8" />
               </g>
 
               <!-- Main Sleeve & Pitch Scale Barrel -->
               <g id="sleeve">
-                <rect x="270" y="125" width="220" height="50" rx="3" fill="url(#metal-linear)" stroke="#2c3e50" stroke-width="1.5" />
-                <!-- Datum / Reference Line at y=150 -->
-                <line x1="275" y1="150" x2="480" y2="150" stroke="#07131e" stroke-width="1.8" />
+                <!-- Stationary Cylindrical Sleeve/Barrel with soft curved bevels -->
+                <rect x="270" y="125" width="220" height="50" rx="4" fill="url(#sleeve-grad)" stroke="#334155" stroke-width="1.5" />
+                <!-- Center Datum / Baseline at y=150 -->
+                <line x1="275" y1="150" x2="480" y2="150" stroke="#0f172a" stroke-width="1.8" />
                 <!-- Dynamic Main Scale Graduations rendered via JS -->
                 <g id="main-scale-ticks"></g>
               </g>
 
               <!-- Movable Thimble, Beveled Scale & Ratchet Assembly -->
               <g id="thimble" style="cursor: grab;">
-                <!-- Beveled Cone leading to sleeve -->
-                <polygon points="0,120 40,110 40,190 0,180" fill="url(#thimble-grad)" stroke="#2c3e50" stroke-width="1.5" />
+                <!-- Beveled Cone (Thimble Scale) leading to sleeve -->
+                <polygon points="0,121 40,111 40,189 0,179" fill="url(#thimble-grad)" stroke="#334155" stroke-width="1.5" stroke-linejoin="round" />
                 <!-- Circular scale tick marks rendered dynamically via JS -->
                 <g id="circular-ticks"></g>
-                <!-- Thimble Cylindrical Body -->
-                <rect x="40" y="110" width="105" height="80" rx="2" fill="url(#thimble-grad)" stroke="#2c3e50" stroke-width="1.5" />
-                <!-- Knurling texture on thimble -->
-                <g id="thimble-knurling" opacity="0.6">
-                  <line x1="55" y1="110" x2="55" y2="190" stroke="#2c3e50" stroke-width="1" stroke-dasharray="2,3" />
-                  <line x1="70" y1="110" x2="70" y2="190" stroke="#2c3e50" stroke-width="1" stroke-dasharray="2,3" />
-                  <line x1="85" y1="110" x2="85" y2="190" stroke="#2c3e50" stroke-width="1" stroke-dasharray="2,3" />
-                  <line x1="100" y1="110" x2="100" y2="190" stroke="#2c3e50" stroke-width="1" stroke-dasharray="2,3" />
-                  <line x1="115" y1="110" x2="115" y2="190" stroke="#2c3e50" stroke-width="1" stroke-dasharray="2,3" />
-                  <line x1="130" y1="110" x2="130" y2="190" stroke="#2c3e50" stroke-width="1" stroke-dasharray="2,3" />
+                <!-- Thimble Cylindrical Body with smooth rounded ends -->
+                <rect x="40" y="111" width="105" height="78" rx="3" fill="url(#thimble-grad)" stroke="#334155" stroke-width="1.5" />
+                <!-- Minimalist Knurling lines on thimble -->
+                <g id="thimble-knurling" opacity="0.45">
+                  <line x1="55" y1="112" x2="55" y2="188" stroke="#334155" stroke-width="1.2" stroke-dasharray="2,3" />
+                  <line x1="70" y1="112" x2="70" y2="188" stroke="#334155" stroke-width="1.2" stroke-dasharray="2,3" />
+                  <line x1="85" y1="112" x2="85" y2="188" stroke="#334155" stroke-width="1.2" stroke-dasharray="2,3" />
+                  <line x1="100" y1="112" x2="100" y2="188" stroke="#334155" stroke-width="1.2" stroke-dasharray="2,3" />
+                  <line x1="115" y1="112" x2="115" y2="188" stroke="#334155" stroke-width="1.2" stroke-dasharray="2,3" />
+                  <line x1="130" y1="112" x2="130" y2="188" stroke="#334155" stroke-width="1.2" stroke-dasharray="2,3" />
                 </g>
-                <!-- Ratchet Stop (Right End) -->
-                <rect x="145" y="125" width="40" height="50" rx="3" fill="#455a64" stroke="#263238" stroke-width="1.5" />
-                <rect x="185" y="133" width="10" height="34" rx="2" fill="#37474f" stroke="#212121" stroke-width="1.2" />
+                <!-- Ratchet Stop Mechanism (Smoothly stepped) -->
+                <rect x="145" y="127" width="40" height="46" rx="3" fill="#334155" stroke="#1e293b" stroke-width="1.5" />
+                <rect x="185" y="134" width="10" height="32" rx="2" fill="#1e293b" stroke="#0f172a" stroke-width="1.2" />
                 <!-- Ratchet grooves -->
                 <g id="ratchet-grooves">
-                  <line x1="150" y1="133" x2="150" y2="167" stroke="rgba(255,255,255,0.22)" stroke-width="1.5" />
-                  <line x1="157" y1="133" x2="157" y2="167" stroke="rgba(255,255,255,0.22)" stroke-width="1.5" />
-                  <line x1="164" y1="133" x2="164" y2="167" stroke="rgba(255,255,255,0.22)" stroke-width="1.5" />
-                  <line x1="171" y1="133" x2="171" y2="167" stroke="rgba(255,255,255,0.22)" stroke-width="1.5" />
+                  <line x1="150" y1="134" x2="150" y2="166" stroke="rgba(255,255,255,0.22)" stroke-width="1.5" />
+                  <line x1="157" y1="134" x2="157" y2="166" stroke="rgba(255,255,255,0.22)" stroke-width="1.5" />
+                  <line x1="164" y1="134" x2="164" y2="166" stroke="rgba(255,255,255,0.22)" stroke-width="1.5" />
+                  <line x1="171" y1="134" x2="171" y2="166" stroke="rgba(255,255,255,0.22)" stroke-width="1.5" />
                 </g>
               </g>
 
@@ -779,8 +819,15 @@
     </section>
 
     <section id="spherometer" class="section">
+      <div class="simulator-intro-overlay" id="spherometer-intro-overlay">
+        <div class="intro-text-container">
+          <span class="intro-badge">Physical Metrology Suite</span>
+          <div id="spherometer-stroke-container" style="width: 100%; max-width: 960px;"></div>
+          <button class="intro-skip-btn" id="spherometer-intro-skip">Skip Intro &rarr;</button>
+        </div>
+      </div>
       <div class="grid-container">
-        <div class="simulator-box">
+        <div class="simulator-box" id="spherometer-sim-box">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
             <h2 style="font-family: 'Cinzel', serif; margin: 0;">Spherometer Simulator</h2>
             <div style="display: flex; gap: 0.8rem; align-items: center;">
@@ -982,9 +1029,9 @@
 
           <div class="form-group">
             <label for="spherometer-h">Screw Height / Sagitta (h mm)</label>
-            <input type="range" id="spherometer-h" min="0" max="10" step="0.01" value="2.5">
+            <input type="range" id="spherometer-h" min="-10" max="10" step="0.01" value="2.5">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.3rem;">
-              <span style="font-size: 0.75rem; color: var(--text-muted);">0 mm</span>
+              <span id="sph-range-min-label" style="font-size: 0.75rem; color: var(--text-muted);">-10 mm</span>
               <div style="display: flex; gap: 0.3rem; align-items: center;">
                 <button class="cal-btn-mini" id="sph-step-m1" title="-1.0 mm" style="padding: 2px 6px; font-size: 0.75rem; background: #0e2942; border: 1px solid var(--panel-border); color: var(--accent); border-radius: 3px; cursor: pointer;">-1.0</button>
                 <button class="cal-btn-mini" id="sph-step-m01" title="-0.1 mm" style="padding: 2px 6px; font-size: 0.75rem; background: #0e2942; border: 1px solid var(--panel-border); color: var(--accent); border-radius: 3px; cursor: pointer;">-0.1</button>
@@ -993,14 +1040,14 @@
                 <button class="cal-btn-mini" id="sph-step-p01" title="+0.1 mm" style="padding: 2px 6px; font-size: 0.75rem; background: #0e2942; border: 1px solid var(--panel-border); color: var(--accent); border-radius: 3px; cursor: pointer;">+0.1</button>
                 <button class="cal-btn-mini" id="sph-step-p1" title="+1.0 mm" style="padding: 2px 6px; font-size: 0.75rem; background: #0e2942; border: 1px solid var(--panel-border); color: var(--accent); border-radius: 3px; cursor: pointer;">+1.0</button>
               </div>
-              <span style="font-size: 0.75rem; color: var(--text-muted);">10 mm</span>
+              <span id="sph-range-max-label" style="font-size: 0.75rem; color: var(--text-muted);">+10 mm</span>
             </div>
           </div>
 
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem;">
             <div class="form-group">
               <label for="spherometer-msr-input">Main Scale (MSR mm)</label>
-              <input type="number" id="spherometer-msr-input" min="0" max="10" step="1" value="2">
+              <input type="number" id="spherometer-msr-input" min="-10" max="10" step="1" value="2">
             </div>
             <div class="form-group">
               <label for="spherometer-csr-input">Circular Scale (CSR Div)</label>
