@@ -1,7 +1,7 @@
 :root {
-  --bg: #07131e;
-  --panel-bg: #0c2033;
-  --panel-border: #1a4267;
+  --bg: #040c14;
+  --panel-bg: #081624;
+  --panel-border: #132f4c;
   --text-main: #f0f7fd;
   --text-muted: #9ec3e3;
   
@@ -55,7 +55,7 @@ header {
   align-items: center;
   width: 100%;
   margin: 0 auto;
-  background: rgba(7, 19, 30, 0.95);
+  background: rgba(4, 12, 20, 0.95);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
 }
@@ -596,6 +596,7 @@ table.iks-table th {
   margin-top: 1.5rem;
   width: 100%;
   max-width: 1150px;
+  perspective: 1000px;
 }
 
 .card-nav {
@@ -606,18 +607,31 @@ table.iks-table th {
   padding: 1.25rem 1.5rem;
   border-radius: 8px;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   text-align: center;
   display: flex;
   align-items: center;
   justify-content: center;
+  position: relative;
+  overflow: hidden;
+  user-select: none;
+  transform-style: preserve-3d;
+  will-change: transform, border-color, box-shadow;
 }
 
-.card-nav:hover {
-  border-color: var(--secondary-hover);
-  background: rgba(15, 39, 63, 0.9);
-  transform: translateY(-4px);
-  box-shadow: 0 10px 25px rgba(61, 165, 217, 0.3);
+.card-nav::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(95, 193, 240, 0.15), transparent);
+  transition: left 0.6s ease;
+  pointer-events: none;
+}
+
+.card-nav:hover::before {
+  left: 100%;
 }
 
 .card-nav h3 {
@@ -626,7 +640,10 @@ table.iks-table th {
   margin-bottom: 0;
   font-size: 1.15rem;
   letter-spacing: 1px;
-  transition: color 0.3s ease;
+  transition: color 0.25s ease;
+  pointer-events: none;
+  display: inline-block;
+  will-change: transform, color;
 }
 
 .card-nav:hover h3 {

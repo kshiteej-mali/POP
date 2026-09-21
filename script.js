@@ -135,9 +135,16 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  document.querySelectorAll('.card-nav').forEach(card => {
-    card.addEventListener('click', () => {
-      navigateToSection(card.dataset.target);
+  document.querySelectorAll('.card-nav').forEach((card, idx) => {
+    card.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (typeof handleBounceCardClick === 'function') {
+        handleBounceCardClick(card, () => {
+          navigateToSection(card.dataset.target);
+        });
+      } else {
+        navigateToSection(card.dataset.target);
+      }
     });
   });
 
@@ -155,6 +162,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initBeamsBackground();
   initParticleText();
   initStrokeTextIntros();
+  initBounceCardsNav();
 
   triggerMathRender();
   setTimeout(triggerMathRender, 300);
@@ -1850,8 +1858,8 @@ function initBeamsBackground() {
     beamHeight: 30,
     beamNumber: 16,
     lightColor: '#5fc1f0',       // Vibrant celestial blue
-    beamColor: '#123352',        // Visible rich navy blue matching theme
-    backgroundColor: '#07131e',  // Main background matching --bg
+    beamColor: '#0c2136',        // Darker rich midnight navy
+    backgroundColor: '#040c14',  // Deep midnight tone matching --bg
     speed: 1.6,
     noiseIntensity: 1.2,         // Distinct, elegant undulating waves
     scale: 0.2,
@@ -2120,8 +2128,8 @@ if (uLightMode > 0.5) {
 
   scene.add(group);
 
-  // Deep blue ambient light to illuminate the planes with contrast
-  const ambientLight = new THREE.AmbientLight('#1a4267', 1.4);
+  // Deep midnight blue ambient light to illuminate the planes with balanced contrast
+  const ambientLight = new THREE.AmbientLight('#0f273d', 1.1);
   scene.add(ambientLight);
 
   function resize() {
@@ -2787,6 +2795,213 @@ function updateHeaderHeight() {
 function initStrokeTextIntros() {
   updateHeaderHeight();
   window.addEventListener('resize', updateHeaderHeight);
+}
+
+/**
+ * React Bits: BounceCards Component Adapted for Vanilla JS + Text-Based Instrument Cards
+ * Features:
+ * 1. Initial elastic bounce entrance on page load (gsap.fromTo scale: 0 -> 1 with elastic.out(1, 0.75))
+ * 2. enableHover sibling physics: hovering pushes adjacent cards aside (translateX) and levels rotation
+ * 3. Text-based internal motion: h3 titles smoothly scale and float with luminous accent glow
+ * 4. Elastic click compression & release: tactile spring bounce when an instrument button is selected
+ */
+let bounceCardsInitialized = false;
+
+function initBounceCardsNav() {
+  const container = document.querySelector('.card-grid');
+  const cards = Array.from(document.querySelectorAll('.card-nav'));
+  if (!container || !cards.length || typeof gsap === 'undefined') return;
+
+  if (bounceCardsInitialized) return;
+  bounceCardsInitialized = true;
+
+  // Base transform style for each instrument button (subtle organic angles)
+  const baseTransforms = [
+    { rotate: -2.5, x: 0, y: 0 },
+    { rotate: 1.8,  x: 0, y: 0 },
+    { rotate: -1.6, x: 0, y: 0 },
+    { rotate: 2.2,  x: 0, y: 0 }
+  ];
+
+  // Initial bounce entrance on mount
+  cards.forEach((card, i) => {
+    card.dataset.cardIdx = i;
+    const t = baseTransforms[i] || { rotate: 0, x: 0, y: 0 };
+    gsap.set(card, {
+      rotation: t.rotate,
+      x: t.x,
+      y: t.y,
+      scale: 0,
+      transformOrigin: '50% 50%'
+    });
+  });
+
+  gsap.to(cards, {
+    scale: 1,
+    duration: 1.1,
+    delay: 0.35,
+    stagger: 0.08,
+    ease: 'elastic.out(1, 0.65)',
+    clearProps: 'scale'
+  });
+
+  // Push siblings hover animation (React Bits BounceCards enableHover logic)
+  const pushSiblings = (hoveredIdx) => {
+    cards.forEach((card, i) => {
+      gsap.killTweensOf(card);
+      const title = card.querySelector('h3');
+      if (title) gsap.killTweensOf(title);
+
+      const base = baseTransforms[i] || { rotate: 0, x: 0, y: 0 };
+
+      if (i === hoveredIdx) {
+        // Active hovered card: flattens rotation, lifts up slightly, text glows & scales
+        gsap.to(card, {
+          rotation: 0,
+          x: 0,
+          y: -6,
+          scale: 1.04,
+          borderColor: '#5fc1f0',
+          boxShadow: '0 14px 32px rgba(61, 165, 217, 0.4)',
+          backgroundColor: 'rgba(18, 48, 76, 0.92)',
+          duration: 0.45,
+          ease: 'back.out(1.6)',
+          overwrite: 'auto'
+        });
+
+        if (title) {
+          gsap.to(title, {
+            scale: 1.08,
+            color: '#ffffff',
+            letterSpacing: '1.6px',
+            textShadow: '0 0 16px rgba(95, 193, 240, 0.8)',
+            duration: 0.35,
+            ease: 'power2.out'
+          });
+        }
+      } else {
+        // Sibling cards: pushed outward horizontally away from hovered card with stagger
+        const pushDistance = i < hoveredIdx ? -14 : 14;
+        const distIndex = Math.abs(hoveredIdx - i);
+        const delay = distIndex * 0.04;
+
+        gsap.to(card, {
+          rotation: base.rotate * 1.35,
+          x: pushDistance,
+          y: 2,
+          scale: 0.98,
+          borderColor: '#132f4c',
+          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)',
+          backgroundColor: 'rgba(9, 23, 38, 0.7)',
+          duration: 0.45,
+          delay,
+          ease: 'back.out(1.4)',
+          overwrite: 'auto'
+        });
+
+        if (title) {
+          gsap.to(title, {
+            scale: 0.96,
+            color: '#73bfb8',
+            letterSpacing: '1px',
+            textShadow: 'none',
+            duration: 0.35,
+            ease: 'power2.out'
+          });
+        }
+      }
+    });
+  };
+
+  const resetSiblings = () => {
+    cards.forEach((card, i) => {
+      gsap.killTweensOf(card);
+      const title = card.querySelector('h3');
+      if (title) gsap.killTweensOf(title);
+
+      const base = baseTransforms[i] || { rotate: 0, x: 0, y: 0 };
+
+      gsap.to(card, {
+        rotation: base.rotate,
+        x: 0,
+        y: 0,
+        scale: 1,
+        borderColor: '#132f4c',
+        boxShadow: '0 6px 18px rgba(0, 0, 0, 0.25)',
+        backgroundColor: 'rgba(11, 28, 46, 0.75)',
+        duration: 0.5,
+        ease: 'elastic.out(1, 0.75)',
+        overwrite: 'auto'
+      });
+
+      if (title) {
+        gsap.to(title, {
+          scale: 1,
+          color: '#73bfb8',
+          letterSpacing: '1px',
+          textShadow: 'none',
+          duration: 0.35,
+          ease: 'power2.out'
+        });
+      }
+    });
+  };
+
+  cards.forEach((card, idx) => {
+    card.addEventListener('mouseenter', () => pushSiblings(idx));
+  });
+
+  container.addEventListener('mouseleave', resetSiblings);
+}
+
+function handleBounceCardClick(card, onComplete) {
+  if (typeof gsap === 'undefined' || !card) {
+    if (typeof onComplete === 'function') onComplete();
+    return;
+  }
+
+  const title = card.querySelector('h3');
+
+  // Tactile elastic spring click bounce: quick squeeze then snappy elastic recoil
+  const tl = gsap.timeline({
+    onComplete: () => {
+      if (typeof onComplete === 'function') onComplete();
+    }
+  });
+
+  tl.to(card, {
+    scale: 0.92,
+    y: 4,
+    borderColor: '#fec601',
+    boxShadow: '0 0 24px rgba(254, 198, 1, 0.5)',
+    duration: 0.12,
+    ease: 'power2.in'
+  });
+
+  if (title) {
+    tl.to(title, {
+      scale: 0.93,
+      color: '#fed338',
+      textShadow: '0 0 14px rgba(254, 198, 1, 0.9)',
+      duration: 0.12,
+      ease: 'power2.in'
+    }, 0);
+  }
+
+  tl.to(card, {
+    scale: 1.05,
+    y: -4,
+    duration: 0.35,
+    ease: 'elastic.out(1.2, 0.5)'
+  });
+
+  if (title) {
+    tl.to(title, {
+      scale: 1.05,
+      duration: 0.35,
+      ease: 'elastic.out(1.2, 0.5)'
+    }, '-=0.35');
+  }
 }
 
 if (typeof module !== 'undefined' && module.exports) {
