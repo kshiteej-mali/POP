@@ -2820,7 +2820,8 @@ function initBounceCardsNav() {
     { rotate: -2.5, x: 0, y: 0 },
     { rotate: 1.8,  x: 0, y: 0 },
     { rotate: -1.6, x: 0, y: 0 },
-    { rotate: 2.2,  x: 0, y: 0 }
+    { rotate: 2.2,  x: 0, y: 0 },
+    { rotate: -1.2, x: 0, y: 0 }
   ];
 
   // Initial bounce entrance on mount
