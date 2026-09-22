@@ -891,3 +891,61 @@ body.intro-active {
   touch-action: none !important;
 }
 
+/* ==========================================================================
+   Site Footer & Credits Styling
+   ========================================================================== */
+.site-footer {
+  margin-top: 4rem;
+  border-top: 1px solid var(--panel-border);
+  background: rgba(4, 12, 20, 0.95);
+  padding: 2.5rem 2rem 2rem;
+  position: relative;
+  z-index: 5;
+}
+
+.footer-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 1.2rem;
+}
+
+.footer-logo {
+  font-family: 'Cinzel', serif;
+  font-size: 1.25rem;
+  color: var(--text-main);
+  letter-spacing: 1.5px;
+}
+
+.footer-tagline {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  margin-top: 0.3rem;
+}
+
+.footer-credits {
+  border-top: 1px solid rgba(19, 47, 76, 0.6);
+  padding-top: 1.2rem;
+  width: 100%;
+  max-width: 800px;
+}
+
+.credits-heading {
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--accent);
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+.credits-names {
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  line-height: 1.8;
+}
+
+
