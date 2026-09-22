@@ -1,3 +1,16 @@
+/**
+ * ============================================================================
+ * Precision of Physics (POP) - High-Precision Metrology Suite
+ * ----------------------------------------------------------------------------
+ * Created for the Physics SLA Assignment by:
+ * - Avani Shastri (MIT)     - Website Design & Whole Site Architecture
+ * - Siya Kale (MIT)         - UI/UX Design & Interactive Elements
+ * - Taal Patil (MIT)        - Vernier Caliper & Screw Gauge Metrology Report
+ * - Mrunmayee Kulkarni (MIT)- Spherometer & Indian Knowledge System Report
+ * - Kashish (MIT)           - Simulation Calculations & Metrology Formulations
+ * - Kshiteej Mali (MIT)     - Backend Engines, Math Logic & Interactive Scripts
+ * ============================================================================
+ */
 
 class SplitFlapText {
   constructor(container, options = {}) {
