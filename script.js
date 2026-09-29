@@ -109,7 +109,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     isNavigating = true;
 
-    if (targetId === 'iks') {
+    if (targetId === 'iks' || targetId === 'chakra' || targetId === 'yasti') {
       document.body.classList.add('iks-theme');
     } else {
       document.body.classList.remove('iks-theme');
