@@ -982,3 +982,24 @@ body.intro-active {
 }
 
 
+body.iks-theme .modern-nav-btn {
+  display: none !important;
+}
+body.iks-theme .iks-nav-btn {
+  display: inline-block !important;
+}
+
+/* IKS Mode Navigation Toggle */
+body:not(.iks-theme) .modern-nav-btn {
+  display: inline-block;
+}
+body:not(.iks-theme) .iks-nav-btn {
+  display: none !important;
+}
+body.iks-theme .modern-nav-btn {
+  display: none !important;
+}
+body.iks-theme .iks-nav-btn {
+  display: inline-block !important;
+}
+
