@@ -30,11 +30,13 @@
     <div class="header-nav-container">
       <nav class="instruments-nav">
         <button class="nav-btn active" data-target="home">Home</button>
-        <button class="nav-btn" data-target="vernier">Vernier Caliper</button>
-        <button class="nav-btn" data-target="screw">Screw Gauge</button>
-        <button class="nav-btn" data-target="spherometer">Spherometer</button>
+        <button class="nav-btn modern-nav-btn" data-target="vernier">Vernier Caliper</button>
+        <button class="nav-btn modern-nav-btn" data-target="screw">Screw Gauge</button>
+        <button class="nav-btn modern-nav-btn" data-target="spherometer">Spherometer</button>
       </nav>
       <nav class="iks-nav">
+        <button class="nav-btn iks-nav-btn" data-target="chakra" style="display: none; margin-right: 0.5rem;">Chakra Yantra</button>
+        <button class="nav-btn iks-nav-btn" data-target="yasti" style="display: none; margin-right: 0.5rem;">Yasti Yantra</button>
         <button class="nav-btn" data-target="about" style="margin-right: 0.5rem;">About Us</button>
         <button class="nav-btn iks-btn" data-target="iks">IKS Metrology</button>
       </nav>
@@ -199,8 +201,13 @@
           </div>
         </div>
 
+      </div>
+    </section>
+
+    <section id="chakra" class="section">
+      <div class="iks-card" style="margin: 0 auto; max-width: 1200px;">
         <!-- Chakra Yantra Generator -->
-        <div id="chakra-generator" class="mt-12 bg-slate-900 border border-slate-700 rounded-xl p-8 shadow-[0_0_40px_rgba(30,27,75,0.8)] text-slate-200">
+        <div id="chakra-generator" class="bg-slate-900 border border-slate-700 rounded-xl p-8 shadow-[0_0_40px_rgba(30,27,75,0.8)] text-slate-200">
           <h2 class="text-3xl font-cinzel text-amber-400 mb-6 text-center tracking-wide" style="font-family: 'Cinzel', serif;">Chakra Yantra Generator</h2>
           
           <!-- Numeric Planet Yantra -->
@@ -266,20 +273,25 @@
           </div>
         </div>
 
+        <div class="mt-8 p-6 bg-slate-800/60 border border-slate-700 rounded-lg text-center">
+          <h3 class="text-2xl font-bold text-amber-400 mb-3 font-cinzel" style="font-family: 'Cinzel', serif;">What is the Chakra Yantra?</h3>
+          <p class="text-base text-slate-300 leading-relaxed mb-3">
+            The <strong>Chakra Yantra</strong> represents the alignment of cosmic energies. It appears in two primary forms: as a numerical magic square (Navagraha Yantras) representing planetary alignments, and as the <strong>Sri Chakra</strong>, a complex sacred geometry representing the cosmos.
+          </p>
+          <p class="text-base text-slate-300 leading-relaxed">
+            The numerical Yantras ensure balance by making all rows, columns, and diagonals equal to a planetary magic constant. The geometric Sri Chakra consists of 9 interlocking triangles that map out a spiritual journey from the outer physical world (the 9 Avaranas) to the central source of creation (Bindu).
+          </p>
+        </div>
+
+      </div>
+    </section>
+
+    <section id="yasti" class="section">
+      <div class="iks-card" style="margin: 0 auto; max-width: 1200px;">
         <!-- Yasti Yantra Generator -->
-        <div id="yasti-generator" class="mt-12 bg-slate-900 border border-slate-700 rounded-xl p-8 shadow-[0_0_40px_rgba(30,27,75,0.8)] text-slate-200">
+        <div id="yasti-generator" class="bg-slate-900 border border-slate-700 rounded-xl p-8 shadow-[0_0_40px_rgba(30,27,75,0.8)] text-slate-200">
           <h2 class="text-3xl font-cinzel text-teal-400 mb-6 text-center tracking-wide" style="font-family: 'Cinzel', serif;">Yasti Yantra (The Stick Instrument)</h2>
           
-          <div class="mb-8 p-6 bg-slate-800/60 border border-slate-700 rounded-lg">
-            <h3 class="text-xl font-bold text-slate-200 mb-3 font-cinzel" style="font-family: 'Cinzel', serif;">Origin & Core Concept</h3>
-            <p class="text-sm text-slate-300 leading-relaxed mb-3">
-              Invented by Indian mathematician-astronomer <strong>Bhaskaracharya II</strong> in his 1150 CE treatise <em>"Siddhanta Shiromani"</em>.
-            </p>
-            <p class="text-sm text-slate-300 leading-relaxed">
-              A physical, trigonometric analogue calculator that solves for unknown real-world heights and distances strictly using the geometric scale properties of <strong>Similar Triangles</strong>, bypassing the need for modern tangent tables.
-            </p>
-          </div>
-
           <div class="flex flex-col lg:flex-row gap-8">
             <!-- Left: Info & Calculator -->
             <div class="w-full lg:w-1/2 flex flex-col gap-6">
@@ -368,6 +380,16 @@
               <div class="absolute top-2 left-2 text-xs text-slate-500 font-mono z-10 pointer-events-none">Drag to rotate • Scroll to zoom</div>
               <div id="yasti-3d-container" class="absolute inset-0"></div>
             </div>
+          </div>
+          
+          <div class="mt-8 p-6 bg-slate-800/60 border border-slate-700 rounded-lg text-center">
+            <h3 class="text-2xl font-bold text-teal-400 mb-3 font-cinzel" style="font-family: 'Cinzel', serif;">What is the Yasti Yantra?</h3>
+            <p class="text-base text-slate-300 leading-relaxed mb-3">
+              Invented by Indian mathematician-astronomer <strong>Bhaskaracharya II</strong> in his 1150 CE treatise <em>"Siddhanta Shiromani"</em>.
+            </p>
+            <p class="text-base text-slate-300 leading-relaxed">
+              It is a physical, trigonometric analogue calculator that solves for unknown real-world heights and distances strictly using the geometric scale properties of <strong>Similar Triangles</strong>, bypassing the need for modern tangent tables.
+            </p>
           </div>
         </div>
       </div>
